@@ -1,18 +1,18 @@
 :root {
-    --primary-color: #0E1538; 
-    --secondary-color: #F2E9D9; 
+    --primary-color: #0E1538;
+    --secondary-color: #F2E9D9;
     --background-color: #FBF6EF;
     --text-color: #EEE3CE;
     --accent-color: #5AAC8D;
 }
-  
+
 body {
     margin: 0;
     font-family: sans-serif;
     background-color: var(--background-color);
     color: var(--text-color);
 }
-  
+
 header {
     display: flex;
     justify-content: space-between;
@@ -21,73 +21,102 @@ header {
     background-color: var(--primary-color);
     color: var(--secondary-color);
 }
-  
+
 header h2 {
     margin: 0;
 }
-  
-.hamburger-btn {
+
+.hamburger {
     background: none;
     border: none;
     font-size: 1.5rem;
     color: var(--secondary-color);
     cursor: pointer;
 }
-  
-.hamburger-btn:hover {
+
+.hamburger:hover {
     color: var(--accent-color);
 }
 
+.nav-links {
+    list-style: none;
+    padding: 0;
+    color: var(--primary-color);
+    margin: 0;
+    display: none;
+    flex-direction: column;
+    background-color: #f1f1f1;
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-links li {
+    padding: 10px 20px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+  }
+
+  .nav-links li:last-child {
+    border-bottom: none;
+  }
+
 .main-container {
-    min-height: 100vh; 
+    min-height: 100vh;
 }
-  
+
 /*login*/
-.login-page-wrapper {
+.page-wrapper {
     min-height: 100vh;
     display: flex;
     align-items: flex-start;
     justify-content: center;
     background-color: var(--secondary-color);
 }
-  
-.login-container {
+
+.container {
     width: 100%;
     max-width: 460px;
     padding: 3rem 2.5rem;
 }
 
-.login-container h1 {
+.container h1 {
     font-size: 2rem;
     font-weight: bold;
     color: var(--primary-color);
     text-align: center;
     margin: 0;
 }
-  
-.login-subtitle {
+
+.subtitle {
     text-align: center;
     color: var(--primary-color);
     margin-bottom: 2rem;
 }
-  
-.login-form {
+
+.form {
     display: flex;
     flex-direction: column;
     gap: 2rem;
 }
-  
+
 .form-group {
     display: flex;
     flex-direction: column;
 }
-  
+
 .form-group label {
     font-weight: 600;
     margin-bottom: 0.5rem;
     color: var(--primary-color);
 }
-  
+
 .form-group input {
     padding: 0.85rem 1rem;
     font-size: 1rem;
@@ -96,8 +125,8 @@ header h2 {
     background-color: var(--background-color);
     color: var(--primary-color);
 }
-  
-.login-button {
+
+.button {
     background-color: var(--accent-color);
     color: white;
     font-weight: bold;
@@ -109,8 +138,8 @@ header h2 {
     margin-top: 1rem;
     transition: background-color 0.3s ease;
 }
-  
-.login-button:hover {
-    background-color: #4a977d;
+
+
+.prompt {
+    color: var(--accent-color);
 }
-  
