@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
 
 function Login({ onLogin }) {
   const [email, setEmail] = useState('');
@@ -8,12 +10,43 @@ function Login({ onLogin }) {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     // aquí iría el llamado al backend para buscar user 
-    // si coincide con bdd asinar valor a setUser
-    onLogin(true);
-    navigate('/home')
+    try {
+      const response = await axios.post('http://localhost:3000/users/login',
+        {
+          email: email,
+          password: password,
+        },
+      );
+
+      // si coincide con bdd asinar valor a setUser
+      if (response.status === 200) {
+        const data = response.data;
+        const message = data.message;
+        const user = data.user;
+
+        console.log(message);
+        onLogin(user);
+        navigate('/home');
+      }
+    } catch (error) {
+
+      if (error.response?.status === 404) {
+        console.log('Usuario no encontrado');
+      }
+
+      else if (error.response?.status === 401) {
+        console.log('Contraseña incorrecta');
+      }
+
+      else if (error.response?.status === 404) {
+        console.log('Error en el servidor');
+      }
+    }
+
   };
 
   return (
@@ -45,10 +78,10 @@ function Login({ onLogin }) {
 
           <button className="button" type="submit">Ingresar</button>
           <p className="prompt">
-          ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
-        </p>
+            ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
+          </p>
         </form>
-       
+
       </div>
     </div>
   );
