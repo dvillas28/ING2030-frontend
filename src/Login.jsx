@@ -35,15 +35,15 @@ function Login({ onLogin }) {
     } catch (error) {
 
       if (error.response?.status === 404) {
-        console.log('Usuario no encontrado');
+        alert('Usuario no encontrado');
       }
 
       else if (error.response?.status === 401) {
-        console.log('Contraseña incorrecta');
+        alert('Contraseña incorrecta');
       }
 
       else if (error.response?.status === 404) {
-        console.log('Error en el servidor');
+        alert('Error en el servidor');
       }
     }
 
