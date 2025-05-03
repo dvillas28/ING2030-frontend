@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function Dashboard({ user }) {
+function Dashboard() {
     const [dailySpend, setDailySpend] = useState(0);
     const [weeklyGoal, setWeeklyGoal] = useState(null);
     const [weeklySpend, setWeeklySpend] = useState(0);
@@ -10,6 +10,9 @@ function Dashboard({ user }) {
     const [weeklyProgress, setWeeklyProgress] = useState(0);
     const [monthlyProgress, setMonthlyProgress] = useState(0);
     const [dailySpendPerHour, setDailySpendPerHour] = useState(0);
+
+    const data = localStorage.getItem('user');
+    const user = JSON.parse(data);
 
     // obtener datos del backend
     useEffect(() => {
@@ -21,7 +24,7 @@ function Dashboard({ user }) {
 
                 // obtener metas
                 const goalsResponse = await axios.get(`http://localhost:3000/goals/${user.id}`);
-                
+
                 if (goalsResponse.data.weekly) {
                     setWeeklyGoal(goalsResponse.data.weekly.limitAmount);
                     setWeeklyProgress(goalsResponse.data.weekly.progress);
@@ -40,7 +43,7 @@ function Dashboard({ user }) {
             }
         };
 
-        fetchData(); 
+        fetchData();
     }, [[user.id]]);
 
     // porcentaje de gasto
