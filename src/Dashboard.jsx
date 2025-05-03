@@ -90,7 +90,7 @@ function Dashboard({ user }) {
                         <p>Progreso semanal: {monthlyProgress}%</p>
                     </div>
                 ) : (
-                    <p className="message">Aún no has establecido una meta semanal.</p>
+                    <p className="message">Aún no has establecido una meta mensual.</p>
                 )}
             </div>
         </div>
