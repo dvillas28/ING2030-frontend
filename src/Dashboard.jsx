@@ -69,12 +69,7 @@ function Dashboard({ user }) {
                 ) : (
                     <p>Has gastado {dailySpend} hoy.</p>
                 )}
-            </div>
-            <div className="card">
-                <h4>Tasa de gasto actual</h4>
-                <div>
-                    <p>Estás gastando {dailySpendPerHour} por hora.</p>
-                </div>
+                <p>Estás gastando ${dailySpendPerHour} por hora.</p>
             </div>
             <div className="card">
                 <h4>Progreso Semanal</h4>
