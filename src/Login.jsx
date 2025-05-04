@@ -15,7 +15,7 @@ function Login({ onLogin }) {
 
     // aquí iría el llamado al backend para buscar user 
     try {
-      const response = await axios.post('http://localhost:3000/users/login',
+      const response = await axios.post('https://ing2030-backend.onrender.com/users/login',
         {
           email: email,
           password: password,

@@ -17,7 +17,7 @@ function Budget({ user }) {
         const fetchBudgetData = async () => {
             try {
                 // obtener presupuesto
-                const budgetRes = await axios.get(`http://localhost:3000/dashboard/budget/${user.id}`);
+                const budgetRes = await axios.get(`https://ing2030-backend.onrender.com/dashboard/budget/${user.id}`);
                 setBudget(budgetRes.data);
                 setLimitAmount(budgetRes.data.limitAmount);
 
@@ -26,11 +26,11 @@ function Budget({ user }) {
                 const month = today.getMonth() + 1;
                 const year = today.getFullYear();
 
-                const expensesRes = await axios.get(`http://localhost:3000/budget/${user.id}`, {
+                const expensesRes = await axios.get(`https://ing2030-backend.onrender.com/budget/${user.id}`, {
                     params: { month, year }
                 });
                 setExpensesData(expensesRes.data);
-                console.log('Gastos recibidos:', expensesRes.data); 
+                console.log('Gastos recibidos:', expensesRes.data);
             } catch (err) {
                 console.error('Error obteniendo datos:', err);
             }
@@ -43,7 +43,7 @@ function Budget({ user }) {
         e.preventDefault();
         try {
             // actualizar / subir presupuesto
-            const BudgetRes = await axios.post(`http://localhost:3000/budget`, {
+            const BudgetRes = await axios.post(`https://ing2030-backend.onrender.com/budget`, {
                 userId: user.id,
                 period: "monthly",
                 limitAmount
@@ -71,12 +71,12 @@ function Budget({ user }) {
                 ]
             };
         }
-    
+
         const labels = expensesData.map(tx => new Date(tx.date).toLocaleDateString('es-CL'));
         const data = expensesData.map(tx => tx.total);
-    
-        console.log('Datos generados para el gráfico:', { labels, data }); 
-    
+
+        console.log('Datos generados para el gráfico:', { labels, data });
+
         return {
             labels,
             datasets: [
@@ -91,7 +91,7 @@ function Budget({ user }) {
             ]
         };
     };
-    
+
 
     const chartOptions = {
         responsive: true,
@@ -101,7 +101,7 @@ function Budget({ user }) {
                 beginAtZero: true,
                 ticks: {
                     stepSize: 2000,
-                    callback: function(value) {
+                    callback: function (value) {
                         return `$${value}`;
                     }
                 },
@@ -131,7 +131,7 @@ function Budget({ user }) {
             }
         }
     };
-    
+
 
     return (
         <div className="budget-container">

@@ -15,7 +15,7 @@ function Signin({ onLogin }) {
         e.preventDefault();
         // aquí iría el llamado al backend para obtener user y asinar true a onLogin
         try {
-            const response = await axios.post('http://localhost:3000/users/register',
+            const response = await axios.post('https://ing2030-backend.onrender.com/users/register',
                 {
                     username: nickname,
                     email: email,
