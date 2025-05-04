@@ -21,9 +21,16 @@ function Budget({ user }) {
                 setBudget(budgetRes.data);
                 setLimitAmount(budgetRes.data.limitAmount);
 
-                // obtener gastos para grafico
-                //const expensesRes = await axios.get(`http://localhost:3000/budget/expenses/${user.id}`);
-                //setExpensesData(expensesRes.data);
+                // obtener gastos para grafico del mes
+                const today = new Date();
+                const month = today.getMonth() + 1;
+                const year = today.getFullYear();
+
+                const expensesRes = await axios.get(`http://localhost:3000/budget/${user.id}`, {
+                    params: { month, year }
+                });
+                setExpensesData(expensesRes.data);
+                console.log('Gastos recibidos:', expensesRes.data); 
             } catch (err) {
                 console.error('Error obteniendo datos:', err);
             }
@@ -49,8 +56,82 @@ function Budget({ user }) {
     };
 
     const generateChartData = () => {
-        // generar grafico de gastos
-    }
+        if (expensesData.length === 0) {
+            return {
+                labels: ['No hay datos'],
+                datasets: [
+                    {
+                        label: 'Gastos diarios',
+                        data: [0],
+                        fill: false,
+                        backgroundColor: 'rgba(99, 255, 195, 0.6)',
+                        borderColor: 'rgb(90, 172, 141)',
+                        tension: 0.2
+                    }
+                ]
+            };
+        }
+    
+        const labels = expensesData.map(tx => new Date(tx.date).toLocaleDateString('es-CL'));
+        const data = expensesData.map(tx => tx.total);
+    
+        console.log('Datos generados para el gráfico:', { labels, data }); 
+    
+        return {
+            labels,
+            datasets: [
+                {
+                    label: 'Gastos diarios',
+                    data,
+                    fill: false,
+                    backgroundColor: 'rgba(99, 255, 195, 0.6)',
+                    borderColor: 'rgb(90, 172, 141)',
+                    tension: 0.2
+                }
+            ]
+        };
+    };
+    
+
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 2000,
+                    callback: function(value) {
+                        return `$${value}`;
+                    }
+                },
+                grid: {
+                    drawBorder: true,
+                    color: 'rgba(0,0,0,0.1)'
+                }
+            },
+            x: {
+                ticks: {
+                    maxRotation: 45,
+                    minRotation: 0
+                },
+                grid: {
+                    display: false
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: (context) => `Gasto: $${context.parsed.y}`
+                }
+            }
+        }
+    };
+    
 
     return (
         <div className="budget-container">
@@ -75,8 +156,13 @@ function Budget({ user }) {
                     <button type="submit" className="submit-btn">Guardar</button>
                 </form>
                 <div className="chart-section">
-                    {/* Aquí irá el gráfico */}
-                    <div className="chart-placeholder">[ Gráfico de gastos mensuales ]</div>
+                    {expensesData.length > 0 ? (
+                        <Line data={generateChartData()} options={chartOptions} />
+
+                    ) : (
+                        <p>No hay movimientos este mes.</p>
+                    )}
+
                 </div>
             </div>
         </div>

@@ -3,7 +3,8 @@
     --secondary-color: #F2E9D9;
     --background-color: #FBF6EF;
     --text-color: #EEE3CE;
-    --accent-color: #5AAC8D;
+    --accent-color: #5aac8d;
+    --highlight-color: #ff7f50;
 }
 
 body {
@@ -205,27 +206,36 @@ header h2 {
 }
 
 .budget-container {
+    max-width: 960px;
     display: flex;
+    flex-direction: column;
 }
 
 .budget-section {
-    flex: 1;
-    padding: 2rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    justify-content: flex-start;
-    color: var(--primary-color)
+    gap: 1rem;
+    padding: 1.5rem;
 }
 
-.chart-section {
-    flex: 2;
-    background-color: #f9f9f9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 300px;
+.budget-section h2 {
+    margin-bottom: 0.5rem;
+    color: var(--primary-color); 
 }
+
+
+.chart-section {
+    display: flex;
+    height: 300px;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
 
 .chart-placeholder {
     font-size: 1.2rem;
@@ -245,7 +255,7 @@ header h2 {
 
 .budget-input {
     color: var(--primary-color);
-    padding: 1rem;
+    padding: 0.8rem;
     font-size: 1rem;
     border: 2px solid var(--accent-color);
     border-radius: 8px;
@@ -268,4 +278,5 @@ header h2 {
 .current-budget, .no-budget {
     font-size: 1.1rem;
     color: var(--primary-color);
+    margin-top: 0.5rem;
 }
