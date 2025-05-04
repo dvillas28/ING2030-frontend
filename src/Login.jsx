@@ -30,7 +30,6 @@ function Login({ onLogin }) {
 
         console.log(message);
         onLogin(user);
-        localStorage.setItem('user', JSON.stringify(user));
         navigate('/home');
       }
     } catch (error) {
