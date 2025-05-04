@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import API_URL from './api';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -17,7 +18,7 @@ function Budget({ user }) {
         const fetchBudgetData = async () => {
             try {
                 // obtener presupuesto
-                const budgetRes = await axios.get(`https://ing2030-backend.onrender.com/dashboard/budget/${user.id}`);
+                const budgetRes = await axios.get(`${API_URL}/dashboard/budget/${user.id}`);
                 setBudget(budgetRes.data);
                 setLimitAmount(budgetRes.data.limitAmount);
 
@@ -26,7 +27,7 @@ function Budget({ user }) {
                 const month = today.getMonth() + 1;
                 const year = today.getFullYear();
 
-                const expensesRes = await axios.get(`https://ing2030-backend.onrender.com/budget/${user.id}`, {
+                const expensesRes = await axios.get(`${API_URL}/budget/${user.id}`, {
                     params: { month, year }
                 });
                 setExpensesData(expensesRes.data);
@@ -43,7 +44,7 @@ function Budget({ user }) {
         e.preventDefault();
         try {
             // actualizar / subir presupuesto
-            const BudgetRes = await axios.post(`https://ing2030-backend.onrender.com/budget`, {
+            const BudgetRes = await axios.post(`${API_URL}/budget`, {
                 userId: user.id,
                 period: "monthly",
                 limitAmount

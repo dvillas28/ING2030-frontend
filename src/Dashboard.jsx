@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_URL from './api';
 
 function Dashboard({ user }) {
     const [dailySpend, setDailySpend] = useState(0);
@@ -12,7 +13,7 @@ function Dashboard({ user }) {
         const fetchData = async () => {
             try {
                 // obtener gasto diario
-                const dailyResponse = await axios.get(`https://ing2030-backend.onrender.com/dashboard/daily/${user.id}`);
+                const dailyResponse = await axios.get(`${API_URL}/dashboard/daily/${user.id}`);
                 setDailySpend(dailyResponse.data.total);
                 console.log('Respuesta de gasto diario:', dailyResponse.data);
                 calculateDailySpendPerHour(dailyResponse.data.total, dailyResponse.data.startOfDay);
@@ -21,7 +22,7 @@ function Dashboard({ user }) {
             }
             // obtener presupuesto
             try {
-                const budgetResponse = await axios.get(`https://ing2030-backend.onrender.com/dashboard/budget/${user.id}`);
+                const budgetResponse = await axios.get(`${API_URL}/dashboard/budget/${user.id}`);
                 setBudget(budgetResponse.data);
             } catch (error) {
                 console.error('Error al obtener el presupuesto:', error);

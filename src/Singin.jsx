@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import API_URL from './api';
 
 function Signin({ onLogin }) {
     const [email, setEmail] = useState('');
@@ -15,7 +16,7 @@ function Signin({ onLogin }) {
         e.preventDefault();
         // aquí iría el llamado al backend para obtener user y asinar true a onLogin
         try {
-            const response = await axios.post('https://ing2030-backend.onrender.com/users/register',
+            const response = await axios.post(`${API_URL}/users/register`,
                 {
                     username: nickname,
                     email: email,
