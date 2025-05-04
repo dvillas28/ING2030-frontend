@@ -1,100 +1,112 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function Dashboard() {
+function Dashboard({ user }) {
     const [dailySpend, setDailySpend] = useState(0);
-    const [weeklyGoal, setWeeklyGoal] = useState(null);
-    const [weeklySpend, setWeeklySpend] = useState(0);
-    const [monthlyGoal, setMonthlyGoal] = useState(null);
-    const [monthlySpend, setMonthlySpend] = useState(0);
-    const [weeklyProgress, setWeeklyProgress] = useState(0);
-    const [monthlyProgress, setMonthlyProgress] = useState(0);
     const [dailySpendPerHour, setDailySpendPerHour] = useState(0);
 
-    const data = localStorage.getItem('user');
-    const user = JSON.parse(data);
+    const [budget, setBudget] = useState(0);
 
     // obtener datos del backend
     useEffect(() => {
         const fetchData = async () => {
             try {
                 // obtener gasto diario
-                const dailyResponse = await axios.get(`http://localhost:3000/daily/${user.id}`);
+                const dailyResponse = await axios.get(`http://localhost:3000/dashboard/daily/${user.id}`);
                 setDailySpend(dailyResponse.data.total);
-
-                // obtener metas
-                const goalsResponse = await axios.get(`http://localhost:3000/goals/${user.id}`);
-
-                if (goalsResponse.data.weekly) {
-                    setWeeklyGoal(goalsResponse.data.weekly.limitAmount);
-                    setWeeklyProgress(goalsResponse.data.weekly.progress);
-                    setWeeklySpend(goalsResponse.data.weekly.spentAmount)
-                }
-
-                if (goalsResponse.data.monthly) {
-                    setMonthlyGoal(goalsResponse.data.monthly.limitAmount);
-                    setMonthlyProgress(goalsResponse.data.monthly.progress);
-                    setMonthlySpend(goalsResponse.data.monthly.spentAmount)
-                }
-
-                calculateDailySpendPerHour(dailyResponse.data.startOfDay);
+                console.log('Respuesta de gasto diario:', dailyResponse.data); 
+                calculateDailySpendPerHour(dailyResponse.data.total, dailyResponse.data.startOfDay);
             } catch (error) {
-                console.error('Error al obtener los datos:', error);
+                console.error('Error al obtener el gasto diario:', error);
+            }
+            // obtener presupuesto
+            try {
+                const budgetResponse = await axios.get(`http://localhost:3000/dashboard/budget/${user.id}`);
+                setBudget(budgetResponse.data);
+            } catch (error) {
+                console.error('Error al obtener el presupuesto:', error);
             }
         };
 
         fetchData();
-    }, [[user.id]]);
+    }, [user.id]);
 
-    // porcentaje de gasto
-    const calculateSpendPercentage = (spent, limit) => {
-        return limit ? ((spent / limit) * 100).toFixed(2) : 0;
-    };
+    const budgetUsagePercentage = budget ? Math.min((budget.spentAmount / budget.limitAmount) * 100, 100) : 0;
 
     // tasa de gasto
-    const calculateDailySpendPerHour = (timestamp) => {
+    const calculateDailySpendPerHour = (spend, startTimestamp) => {
         const now = new Date();
-        const startOfDay = new Date(timestamp);
-
-        // diferencia de horas
-        const hoursDifference = (now - startOfDay) / (1000 * 60 * 60);
-
-        const hourlySpend = hoursDifference > 0 ? (dailySpend / hoursDifference).toFixed(2) : 0;
+        const startOfDayUTC = new Date(startTimestamp);
+    
+        // Convertir UTC a hora local
+        const startOfDayLocal = new Date(
+            startOfDayUTC.getUTCFullYear(),
+            startOfDayUTC.getUTCMonth(),
+            startOfDayUTC.getUTCDate(),
+            0, 0, 0, 0
+        );
+    
+        const hoursDifference = (now - startOfDayLocal) / (1000 * 60 * 60);
+        const hourlySpend = hoursDifference > 0 ? (spend / hoursDifference).toFixed(2) : 0;
+    
+        console.log("Horas transcurridas:", hoursDifference);
+        console.log("Tasa por hora:", hourlySpend);
+    
         setDailySpendPerHour(hourlySpend);
     };
 
     return (
         <div className="dashboard">
-            <div className="card">
+            <div className="card daily-spend">
                 <h4>Gasto del día</h4>
                 {dailySpend === 0 ? (
                     <p>Aún no has realizado ningún gasto hoy.</p>
                 ) : (
-                    <p>Has gastado {dailySpend} hoy.</p>
+                    <div className="spend-details">
+                        <div className="main-amount">
+                            <span className="label">Total hoy:</span>
+                            <span className="amount">${dailySpend}</span>
+                        </div>
+                        <div className="per-hour">
+                            <span className="label">Tasa por hora:</span>
+                            <span className="value">${(dailySpendPerHour * 1).toFixed(0)} /h</span>
+                        </div>
+                        <div className="projection">
+                            <span className="label">Proyección semanal:</span>
+                            <span className="value">${(dailySpend * 7).toFixed(0)}</span>
+                        </div>
+                    </div>
                 )}
-                <p>Estás gastando ${dailySpendPerHour} por hora.</p>
+            </div>
+
+            <div className="card">
+                <h4>Presupuesto</h4>
+                {budget == 0 ? (
+                    <p>Aún no has establecido un presupuesto.</p>
+                ) : (
+                    <div>
+                        <p>${budget.spentAmount} de ${budget.limitAmount} gastado</p>
+                        <div style={{
+                            backgroundColor: '#eee',
+                            borderRadius: '8px',
+                            overflow: 'hidden',
+                            height: '20px',
+                            marginTop: '10px'
+                        }}>
+                            <div style={{
+                                width: `${budgetUsagePercentage}%`,
+                                backgroundColor: budgetUsagePercentage > 90 ? 'red' : '#4caf50',
+                                height: '100%',
+                                transition: 'width 0.3s'
+                            }} />
+                        </div>
+                        <p>{budgetUsagePercentage.toFixed(0)}% del presupuesto usado</p>
+                    </div>
+                )}
             </div>
             <div className="card">
-                <h4>Progreso Semanal</h4>
-                {weeklyGoal ? (
-                    <div>
-                        <p>Has gastado {weeklySpend} de {weeklyGoal} esta semana.</p>
-                        <p>Progreso semanal: {weeklyProgress}%</p>
-                    </div>
-                ) : (
-                    <p className="message">Aún no has establecido una meta semanal.</p>
-                )}
-            </div>
-            <div className="card">
-                <h4>Progreso Mensual</h4>
-                {monthlyGoal ? (
-                    <div>
-                        <p>Has gastado {monthlySpend} de {monthlyGoal} esta semana.</p>
-                        <p>Progreso semanal: {monthlyProgress}%</p>
-                    </div>
-                ) : (
-                    <p className="message">Aún no has establecido una meta mensual.</p>
-                )}
+                <h4>Meta de Ahorro</h4>
+                <p className="message">Aún no has establecido una meta de ahorro.</p>
             </div>
         </div>
     );
