@@ -203,6 +203,10 @@ header h2 {
     font-size: 1rem;
 }
 
+.title {
+    margin-top: 2rem; 
+    text-align: center;  
+}
 
 
 .dashboard h2 {
@@ -262,6 +266,7 @@ header h2 {
     flex-direction: column;
     background-color: var(--secondary-color);
     padding: 1.5rem;
+    margin-bottom: 2rem;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
@@ -307,7 +312,6 @@ header h2 {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1.5rem;
-    padding: 2rem 0;
 }
 
 .change-btn {
@@ -358,4 +362,42 @@ header h2 {
     100% {
         opacity: 0;
     }
+}
+
+.alert-container {
+    max-width: 500px;
+    margin: 2rem;
+    padding: 2rem;
+    background-color: var(--secondary-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+}
+
+h1 {
+    font-size: 1.8em;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.alert-container p {
+    text-align: center;
+    color: var(--accent-color);
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.alert-container ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.alert-container li {
+    background-color: var(--text-color);
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    transition: background-color 0.3s ease;
 }

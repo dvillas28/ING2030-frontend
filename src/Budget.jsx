@@ -63,8 +63,8 @@ function Budget({ user }) {
 
     return (
         <div className="budget-container">
+            <h4 className='title'>Crear presupuesto</h4>
             <div className='create-budget'>
-                <h4>Crear presupuesto</h4>
                 <form onSubmit={handleCreateBudget} className="budget-form">
                     <select
                         value={newBudget.category}
@@ -99,6 +99,7 @@ function Budget({ user }) {
                     <button type="submit" className="submit-btn">Crear presupuesto</button>
                 </form>
             </div>
+            <h4 className='title'>Mis presupuestos</h4>
             <div className="budget-list">
                 {budgets.map((b) => {
                     const usage = calculateUsage(b.spentAmount, b.limitAmount);
