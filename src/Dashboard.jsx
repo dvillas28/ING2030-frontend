@@ -5,43 +5,36 @@ import API_URL from './api';
 function Dashboard({ user }) {
     const [dailySpend, setDailySpend] = useState(0);
     const [dailySpendPerHour, setDailySpendPerHour] = useState(0);
-
-
+    const [spentPercentage, setSpentPercentage] = useState(0);
     const [savingGoal, setSavingGoal] = useState(null);
-    const [budget, setBudget] = useState(0);
 
     // obtener datos del backend
     useEffect(() => {
         const fetchData = async () => {
             try {
                 // obtener gasto diario
-                const dailyResponse = await axios.get(`${API_URL}/dashboard/daily/${user.id}`);
+                const dailyResponse = await axios.get(`${API_URL}/transactions/daily/${user.id}`);
                 setDailySpend(dailyResponse.data.total);
-                console.log('Respuesta de gasto diario:', dailyResponse.data);
+
                 calculateDailySpendPerHour(dailyResponse.data.total, dailyResponse.data.startOfDay);
+                const percent = (user.spent / (user.spent + user.balance)) * 100;
+                setSpentPercentage(percent);
             } catch (error) {
                 console.error('Error al obtener el gasto diario:', error);
             }
-            // obtener presupuesto
-            try {
-                const budgetResponse = await axios.get(`${API_URL}/dashboard/budget/${user.id}`);
-                setBudget(budgetResponse.data);
-            } catch (error) {
-                console.error('Error al obtener el presupuesto:', error);
-            }
+
             try {
                 // obtener meta actual
-                const savingGoal = await axios.get(`https://ing2030-backend.onrender.com/savinggoals/${user.id}`);
+                const savingGoal = await axios.get(`${API_URL}/savinggoals/${user.id}`);
                 setSavingGoal(savingGoal.data[0]?.targetAmount || 0);
             } catch (error) {
                 console.error('Error al obtener meta mensual:', error);
             }
+
         };
 
         fetchData();
     }, [user.id]);
-
-    const budgetUsagePercentage = budget ? Math.min((budget.spentAmount / budget.limitAmount) * 100, 100) : 0;
 
     // tasa de gasto
     const calculateDailySpendPerHour = (spend, startTimestamp) => {
@@ -74,47 +67,44 @@ function Dashboard({ user }) {
                 ) : (
                     <div className="spend-details">
                         <div className="main-amount">
-                            <span className="label">Total hoy:</span>
+                            <span className="label">Total hoy</span>
                             <span className="amount">${dailySpend}</span>
                         </div>
                         <div className="per-hour">
-                            <span className="label">Tasa por hora:</span>
+                            <span className="label">Tasa por hora</span>
                             <span className="value">${(dailySpendPerHour * 1).toFixed(0)} /h</span>
                         </div>
                         <div className="projection">
-                            <span className="label">Proyección semanal:</span>
+                            <span className="label">Proyección semanal</span>
                             <span className="value">${(dailySpend * 7).toFixed(0)}</span>
                         </div>
                     </div>
                 )}
             </div>
 
-            <div className="card">
-                <h4>Presupuesto</h4>
-                {budget == 0 ? (
-                    <p>Aún no has establecido un presupuesto.</p>
-                ) : (
-                    <div>
-                        <p>${budget.spentAmount} de ${budget.limitAmount} gastado</p>
-                        <div style={{
-                            backgroundColor: '#eee',
-                            borderRadius: '8px',
-                            overflow: 'hidden',
-                            height: '20px',
-                            marginTop: '10px'
-                        }}>
-                            <div style={{
-                                width: `${budgetUsagePercentage}%`,
-                                backgroundColor: budgetUsagePercentage > 90 ? 'red' : '#4caf50',
-                                height: '100%',
-                                transition: 'width 0.3s'
-                            }} />
+            <div className="card card-balance">
+                <h4>Saldo</h4>
+                <div className="balance-details">
+                    <div className="info-row">
+                        <span className="value">${user.balance}</span>
+
+                        <div className="info-row">
+                            <span className="label">Gastado</span>
+                            <span className="value">${user.spent}</span>
                         </div>
-                        <p>{budgetUsagePercentage.toFixed(0)}% del presupuesto usado</p>
+                        <div className="progress-bar-container">
+                            <div
+                                className="progress-bar"
+                                style={{ width: `${spentPercentage}%` }}
+                            />
+                        </div>
+                        <div className="progress-info">
+                            <span>{spentPercentage.toFixed(0)}%</span>
+                        </div>
                     </div>
-                )}
-            </div>
-            <div className="card">
+                </div>
+            </div >
+            <div className='card'>
                 <h4>Meta de Ahorro</h4>
                 {savingGoal ? (
                     <span className="goal">
@@ -124,7 +114,8 @@ function Dashboard({ user }) {
                     <p className="no-goal">Aún no tienes una meta de ahorro.</p>
                 )}
             </div>
-        </div>
+        </div >
+
     );
 }
 export default Dashboard;
