@@ -13,7 +13,7 @@ import { Link } from 'react-router-dom';
 import PublicGoogleSheetsParser from 'public-google-sheets-parser';
 import axios from 'axios';
 import API_URL from './api';
-// import addNotification from 'react-push-notification';
+import addNotification from 'react-push-notification';
 
 
 function App() {
@@ -40,7 +40,7 @@ function App() {
 
   }, []);
 
-  // elejir entrada transaccion random
+  // elejir una entrada de transaccion random
   // TODO: hacerlo secuencial con un contador_id
   const chooseRandomEntry = () => {
     if (excel.length > 0) {
@@ -53,6 +53,7 @@ function App() {
     }
   };
 
+  // procesamiento de la transaccion
   const createTransaction = async (entry) => {
 
     try {
@@ -66,16 +67,21 @@ function App() {
         console.log("Transaccion creada exitosamente");
         const newTransaction = response.data.newTransaction;
 
-        // TODO: procesar la transaccion
 
         // crear alerta y notificacion en si se necesita
 
         // LOGICA DE ENVIO DE ALERTAS
-        // Alerta 1: revisar si se sobrepaso el presupuesto
-        // Alerta 2: estado de meta a fin de mes
+        // Por ahora solamente tenemos alertas de cargos
+        if (newTransaction.type === 'cargo') {
 
-        // Ejemplo de envio de alerta:
-        // await sendAlert(`Se ha recibido una nueva transaccion - ${newTransaction.category}: ${newTransaction.description}`);
+          // Alerta 1: revisar si se sobrepaso el presupuesto
+          await checkBudgetUsage(newTransaction);
+
+          // Alerta 2: estado de meta a fin de mes
+
+          // Ejemplo de envio de alerta:
+          // await sendAlert(`Se ha recibido una nueva transaccion - ${newTransaction.category}: ${newTransaction.description}`);
+        }
 
 
 
@@ -85,20 +91,6 @@ function App() {
         // Dashboard    : Los presupuestos se actualizan OK, pero la parte de Saldo aun no, revisar y arreglar
         // Goals        : No se actualiza ya que aun no se implementa. 
         window.dispatchEvent(new Event('transactionCreated'));
-
-        /* 
-          notificacion push de la transaccion
-          descomentar si decidimos usar notificaciones push
-        */
-
-        // addNotification({
-
-        //   title: `Se ha recibido una nueva transaccion - ${newTransaction.category}: ${newTransaction.description}`,
-        //   native: true,
-
-        // })
-
-
       }
     } catch (error) {
       // alert("Error al crear la transaccion");
@@ -106,6 +98,69 @@ function App() {
     }
   };
 
+  const calculateUsage = (spentAmount, limitAmount) => {
+    if (!limitAmount || limitAmount === 0) return 0;
+    const percentage = (spentAmount / limitAmount) * 100;
+    return Math.min(percentage.toFixed(2), 100);
+  };
+
+  const checkBudgetUsage = async (transaction) => {
+    const category = transaction.category;
+    let text;
+    try {
+
+      // buscar si existe un presupuesto asociado a esta transaccion
+      // por ahora, no se maneja el caso en que hayan dos presupuestos con la misma categoria
+      const response = await axios.get(`${API_URL}/budgets/${user.id}/${category}`);
+
+      // if yes: ver el estado del budget
+      if (response.status === 200) {
+        console.log("Presupuesto encontrado");
+
+        const budget = response.data;
+        console.log(budget)
+
+        const usage = calculateUsage(budget.spentAmount, budget.limitAmount);
+        console.log(`usage = ${usage}`);
+
+        // mandar alertas dependiendo del usage
+        if (usage > 99) {
+          // envio de alerta!
+          text = `Atencion! Has sobrepasado tu presupuesto: "${category}"`;
+        }
+
+        else if (usage > 85) {
+          text = `Atencion! Estas muy cerca de sobrepasar tu presupuesto: "${category}"`;
+        }
+
+        else {
+          text = `Se ha recibido una nueva transaccion - ${category}: ${transaction.description}`;
+        }
+
+      }
+
+    } catch (error) {
+      console.log(error);
+
+      // si no existe: mandar alerta de transaccion no considerada en el presupuesto
+      if (error.response?.status === 404) {
+        console.log("No existe presupuesto asociado a esta transaccion");
+        text = `Se ha recibido una nueva transaccion no categorizada - ${transaction.category}: ${transaction.description}`;
+      }
+
+    } finally {
+      // envio de la alerta
+      await sendAlert(text);
+
+      // notificacion push
+      addNotification({
+        title: text,
+        native: true,
+      });
+
+    }
+
+  };
 
   const sendAlert = async (message) => {
     console.log(message);
