@@ -99,7 +99,6 @@ function Dashboard({ user }) {
                         <span>{spentPercentage.toFixed(0)}%</span>
                     </div>
                 </div>
-                )}
             </div>
             <div className="card">
                 <h4>Meta de Ahorro</h4>
@@ -111,6 +110,7 @@ function Dashboard({ user }) {
                     <p className="no-goal">Aún no tienes una meta de ahorro.</p>
                 )}
             </div>
+        </div >
         </div >
     );
 }
