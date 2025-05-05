@@ -71,7 +71,7 @@ header h2 {
 
 .nav-links a {
     text-decoration: none;
-    color: inherit; 
+    color: inherit;
     font-weight: 500;
     transition: color 0.2s ease;
 }
@@ -161,6 +161,7 @@ header h2 {
     background-color: #4caf50;
     transition: width 0.3s ease-in-out;
 }
+
 .progress-info {
     text-align: right;
     font-weight: bold;
@@ -204,8 +205,8 @@ header h2 {
 }
 
 .title {
-    margin-top: 2rem; 
-    text-align: center;  
+    margin-top: 2rem;
+    text-align: center;
 }
 
 
@@ -235,7 +236,9 @@ header h2 {
     color: var(--primary-color);
 }
 
-.card .goal, .amount, .value {
+.card .goal,
+.amount,
+.value {
     font-size: 1.3rem;
     color: var(--accent-color);
 }
@@ -258,7 +261,7 @@ header h2 {
     margin-top: 0;
     font-size: 1.2rem;
     color: var(--primary-color);
-    max-width: 800px; 
+    max-width: 800px;
 }
 
 .create-budget {
@@ -287,7 +290,7 @@ header h2 {
     border-radius: 8px;
     background-color: white;
     outline: none;
-    
+
 }
 
 .submit-btn {
@@ -400,7 +403,8 @@ h1 {
     border-radius: 6px;
     border: 1px solid #e0e0e0;
     transition: background-color 0.3s ease;
-=======
+}
+
 .transactions-container {
     padding: 2rem;
     background-color: var(--background-color);
