@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 import PublicGoogleSheetsParser from 'public-google-sheets-parser';
 import axios from 'axios';
 import API_URL from './api';
+// import addNotification from 'react-push-notification';
 
 
 function App() {
@@ -64,12 +65,40 @@ function App() {
       if (response.status === 201) {
         console.log("Transaccion creada exitosamente");
         const newTransaction = response.data.newTransaction;
-        // setTransac((prev) => [...prev, newTransaction]);
 
         // TODO: procesar la transaccion
-        //  revisar si se sobrepaso el presupuesto
-        //  enviar alertas
+
+        // crear alerta y notificacion en si se necesita
+
+        // LOGICA DE ENVIO DE ALERTAS
+        // Alerta 1: revisar si se sobrepaso el presupuesto
+        // Alerta 2: estado de meta a fin de mes
+
+        // Ejemplo de envio de alerta:
+        // await sendAlert(`Se ha recibido una nueva transaccion - ${newTransaction.category}: ${newTransaction.description}`);
+
+
+
+        // Actualizar vistas pertinentes frente a una nueva transaccion. Aun quedan algunas pendientes...
+        // Transaction  : Se actualiza OK
+        // Alerts       : Se actualiza OK
+        // Dashboard    : Los presupuestos se actualizan OK, pero la parte de Saldo aun no, revisar y arreglar
+        // Goals        : No se actualiza ya que aun no se implementa. 
         window.dispatchEvent(new Event('transactionCreated'));
+
+        /* 
+          notificacion push de la transaccion
+          descomentar si decidimos usar notificaciones push
+        */
+
+        // addNotification({
+
+        //   title: `Se ha recibido una nueva transaccion - ${newTransaction.category}: ${newTransaction.description}`,
+        //   native: true,
+
+        // })
+
+
       }
     } catch (error) {
       // alert("Error al crear la transaccion");
@@ -77,12 +106,40 @@ function App() {
     }
   };
 
+
+  const sendAlert = async (message) => {
+    console.log(message);
+
+    // Crear la alerta
+    try {
+      const response = await axios.post(`${API_URL}/alerts/${user.id}`,
+        {
+          message: message,
+          date: new Date(),
+          type: "what",
+          isRead: false,
+        }
+      )
+
+      if (response.status === 201) {
+        const data = response.data;
+        console.log(data.message);
+        const newAlert = data.newAlert;
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
   return (
     <Router>
       <header>
         {/* Adornar el titulo una vez hayamos elejido un nombre */}
         <h2><Link to='/home'>Nombre App</Link></h2>
         <button className="button" onClick={chooseRandomEntry}>Elegir Entrada Aleatoria</button>
+        {/* <button className="button" onClick={buttonOnClick}>Push</button> */}
         {user && (
           <div>
             <button className="hamburger" onClick={() => setIsOpen(!isOpen)}>

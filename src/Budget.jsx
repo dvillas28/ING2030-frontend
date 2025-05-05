@@ -32,9 +32,13 @@ function Budget({ user }) {
 
     // escuchar el evento transactionCreated para actualiazr los presupuestos
     useEffect(() => {
-        window.addEventListener('transactionCreated', fetchBudgetsData);
+        const refreshBudget = () => {
+            fetchBudgetsData();
+        };
+
+        window.addEventListener('transactionCreated', refreshBudget);
         return () => {
-            window.removeEventListener('transactionCreated', fetchBudgetsData);
+            window.removeEventListener('transactionCreated', refreshBudget);
         };
     }, []);
 
