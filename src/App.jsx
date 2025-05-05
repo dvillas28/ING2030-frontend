@@ -15,9 +15,7 @@ import { Link } from 'react-router-dom';
 function App() {
   const [user, setUser] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
-
-
-
+  
   return (
     <Router>
       <header>

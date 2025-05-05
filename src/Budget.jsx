@@ -1,10 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import API_URL from './api';
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 
 function Budget({ user }) {
@@ -18,7 +14,7 @@ function Budget({ user }) {
         const fetchBudgetsData = async () => {
             try {
                 // obtener presupuestos
-                const budgetRes = await axios.get(`http://localhost:3000/budgets/${user.id}`);
+                const budgetRes = await axios.get(`${API_URL}/budgets/${user.id}`);
                 setBudgets(budgetRes.data);
                 console.log(budgets);
             } catch (err) {
@@ -39,8 +35,7 @@ function Budget({ user }) {
     const handleCreateBudget = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post(`http://localhost:3000/budgets`, {
-            // actualizar / subir presupuesto
+            const res = await axios.post(`${API_URL}/budgets`, {
                 userId: user.id,
                 name: newBudget.name,
                 limitAmount: Number(newBudget.limitAmount),
@@ -65,7 +60,6 @@ function Budget({ user }) {
         const percentage = (spentAmount / limitAmount) * 100;
         return Math.min(percentage.toFixed(2), 100);
     };
-
 
     return (
         <div className="budget-container">
