@@ -5,6 +5,8 @@ function Dashboard({ user }) {
     const [dailySpend, setDailySpend] = useState(0);
     const [dailySpendPerHour, setDailySpendPerHour] = useState(0);
 
+
+    const [savingGoal, setSavingGoal] = useState(null);
     const [budget, setBudget] = useState(0);
 
     // obtener datos del backend
@@ -25,6 +27,13 @@ function Dashboard({ user }) {
                 setBudget(budgetResponse.data);
             } catch (error) {
                 console.error('Error al obtener el presupuesto:', error);
+            }
+            try {
+                // obtener meta actual
+                const savingGoal = await axios.get(`https://ing2030-backend.onrender.com/savinggoals/${user.id}`);
+                setSavingGoal(savingGoal.data[0]?.targetAmount || 0);
+            } catch (error) {
+                console.error('Error al obtener meta mensual:', error);
             }
         };
 
@@ -106,7 +115,13 @@ function Dashboard({ user }) {
             </div>
             <div className="card">
                 <h4>Meta de Ahorro</h4>
-                <p className="message">Aún no has establecido una meta de ahorro.</p>
+                {savingGoal ? (
+                    <span className="goal">
+                        <strong> ${savingGoal} </strong>
+                    </span>
+                ) : (
+                    <p className="no-goal">Aún no tienes una meta de ahorro.</p>
+                )}
             </div>
         </div>
     );
