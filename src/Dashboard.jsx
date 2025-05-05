@@ -8,33 +8,40 @@ function Dashboard({ user }) {
     const [spentPercentage, setSpentPercentage] = useState(0);
     const [savingGoal, setSavingGoal] = useState(null);
 
+    const fetchData = async () => {
+        try {
+            // obtener gasto diario
+            const dailyResponse = await axios.get(`${API_URL}/transactions/daily/${user.id}`);
+            setDailySpend(dailyResponse.data.total);
+
+            calculateDailySpendPerHour(dailyResponse.data.total, dailyResponse.data.startOfDay);
+            const percent = (user.spent / (user.spent + user.balance)) * 100;
+            setSpentPercentage(percent);
+        } catch (error) {
+            console.error('Error al obtener el gasto diario:', error);
+        }
+
+        try {
+            // obtener meta actual
+            const savingGoal = await axios.get(`${API_URL}/savinggoals/${user.id}`);
+            setSavingGoal(savingGoal.data[0]?.targetAmount || 0);
+        } catch (error) {
+            console.error('Error al obtener meta mensual:', error);
+        }
+
+    };
     // obtener datos del backend
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // obtener gasto diario
-                const dailyResponse = await axios.get(`${API_URL}/transactions/daily/${user.id}`);
-                setDailySpend(dailyResponse.data.total);
-
-                calculateDailySpendPerHour(dailyResponse.data.total, dailyResponse.data.startOfDay);
-                const percent = (user.spent / (user.spent + user.balance)) * 100;
-                setSpentPercentage(percent);
-            } catch (error) {
-                console.error('Error al obtener el gasto diario:', error);
-            }
-
-            try {
-                // obtener meta actual
-                const savingGoal = await axios.get(`${API_URL}/savinggoals/${user.id}`);
-                setSavingGoal(savingGoal.data[0]?.targetAmount || 0);
-            } catch (error) {
-                console.error('Error al obtener meta mensual:', error);
-            }
-
-        };
-
         fetchData();
     }, [user.id]);
+
+    // escuchar evento transactionCreated para actualizar el dashboard
+    useEffect(() => {
+        window.addEventListener('transactionCreated', fetchData);
+        return () => {
+            window.removeEventListener('transactionCreated', fetchData);
+        };
+    }, []);
 
     // tasa de gasto
     const calculateDailySpendPerHour = (spend, startTimestamp) => {
