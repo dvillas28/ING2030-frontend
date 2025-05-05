@@ -30,7 +30,7 @@ function App() {
               <li><Link to='/transactions'>Transacciones</Link></li>
               <li><Link to='/goals'>Metas financieras</Link></li>
               <li><Link to='/budget'>Mis presupuestos</Link></li>
-              <li><Link to='/alerts'>Alertas y consejos</Link></li>
+              <li><Link to='/alerts'>Alertas</Link></li>
               <li>Mi Banco</li>
               <li>Mi perfil</li>
               <li>
