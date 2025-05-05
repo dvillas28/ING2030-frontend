@@ -85,32 +85,34 @@ function Dashboard({ user }) {
                     <div className="info-row">
                         <span className="value">${user.balance}</span>
 
-                    <div className="info-row">
-                        <span className="label">Gastado</span>
-                        <span className="value">${user.spent}</span>
-                    </div>
-                    <div className="progress-bar-container">
-                        <div
-                            className="progress-bar"
-                            style={{ width: `${spentPercentage}%` }}
-                        />
-                    </div>
-                    <div className="progress-info">
-                        <span>{spentPercentage.toFixed(0)}%</span>
+                        <div className="info-row">
+                            <span className="label">Gastado</span>
+                            <span className="value">${user.spent}</span>
+                        </div>
+                        <div className="progress-bar-container">
+                            <div
+                                className="progress-bar"
+                                style={{ width: `${spentPercentage}%` }}
+                            />
+                        </div>
+                        <div className="progress-info">
+                            <span>{spentPercentage.toFixed(0)}%</span>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div className="card">
-                <h4>Meta de Ahorro</h4>
-                {savingGoal ? (
-                    <span className="goal">
-                        <strong> ${savingGoal} </strong>
-                    </span>
-                ) : (
-                    <p className="no-goal">Aún no tienes una meta de ahorro.</p>
-                )}
-            </div>
-        </div >
+            <div>
+                <div className="card">
+                    <h4>Meta de Ahorro</h4>
+                    {savingGoal ? (
+                        <span className="goal">
+                            <strong> ${savingGoal} </strong>
+                        </span>
+                    ) : (
+                        <p className="no-goal">Aún no tienes una meta de ahorro.</p>
+                    )}
+                </div>
+            </div >
         </div >
     );
 }
