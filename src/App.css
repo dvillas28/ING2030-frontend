@@ -231,8 +231,7 @@ header h2 {
     color: var(--primary-color);
 }
 
-.amount,
-.value {
+.card .goal, .amount, .value {
     font-size: 1.3rem;
     color: var(--accent-color);
 }
@@ -249,6 +248,7 @@ header h2 {
     flex-direction: column;
     background-color: var(--background-color);
 }
+
 
 .budget-container h4 {
     margin-top: 0;
@@ -308,4 +308,53 @@ header h2 {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1.5rem;
     padding: 2rem 0;
+
+.change-btn {
+    background-color: transparent;
+    color: black;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.current-budget,
+.no-budget {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin-top: 0.5rem;
+}
+
+.popup-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    animation: fadeInOut 3s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
 }

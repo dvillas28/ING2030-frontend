@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import API_URL from './api';
 
 function Login({ onLogin }) {
   const [email, setEmail] = useState('');
@@ -15,7 +15,7 @@ function Login({ onLogin }) {
 
     // aquí iría el llamado al backend para buscar user 
     try {
-      const response = await axios.post('http://localhost:3000/users/login',
+      const response = await axios.post(`${API_URL}/users/login`,
         {
           email: email,
           password: password,

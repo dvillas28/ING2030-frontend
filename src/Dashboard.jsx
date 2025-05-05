@@ -1,12 +1,17 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_URL from './api';
 
 function Dashboard({ user }) {
     const [dailySpend, setDailySpend] = useState(0);
     const [dailySpendPerHour, setDailySpendPerHour] = useState(0);
 
+
     const [spentPercentage, setSpentPercentage] = useState(0);
 
+
+    const [savingGoal, setSavingGoal] = useState(null);
+    const [budget, setBudget] = useState(0);
 
     // obtener datos del backend
     useEffect(() => {
@@ -15,12 +20,14 @@ function Dashboard({ user }) {
                 // obtener gasto diario
                 const dailyResponse = await axios.get(`http://localhost:3000/transactions/daily/${user.id}`);
                 setDailySpend(dailyResponse.data.total);
+
                 calculateDailySpendPerHour(dailyResponse.data.total, dailyResponse.data.startOfDay);
                 const percent = (user.spent / (user.spent + user.balance)) * 100;
                 setSpentPercentage(percent);
             } catch (error) {
                 console.error('Error al obtener el gasto diario:', error);
             }
+
         };
 
         fetchData();
@@ -77,7 +84,7 @@ function Dashboard({ user }) {
                 <div className="balance-details">
                     <div className="info-row">
                         <span className="value">${user.balance}</span>
-                    </div>
+
                     <div className="info-row">
                         <span className="label">Gastado</span>
                         <span className="value">${user.spent}</span>
@@ -92,6 +99,17 @@ function Dashboard({ user }) {
                         <span>{spentPercentage.toFixed(0)}%</span>
                     </div>
                 </div>
+                )}
+            </div>
+            <div className="card">
+                <h4>Meta de Ahorro</h4>
+                {savingGoal ? (
+                    <span className="goal">
+                        <strong> ${savingGoal} </strong>
+                    </span>
+                ) : (
+                    <p className="no-goal">Aún no tienes una meta de ahorro.</p>
+                )}
             </div>
         </div >
     );

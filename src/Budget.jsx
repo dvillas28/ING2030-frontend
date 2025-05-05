@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import API_URL from './api';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -39,6 +40,7 @@ function Budget({ user }) {
         e.preventDefault();
         try {
             const res = await axios.post(`http://localhost:3000/budgets`, {
+            // actualizar / subir presupuesto
                 userId: user.id,
                 name: newBudget.name,
                 limitAmount: Number(newBudget.limitAmount),
@@ -63,6 +65,7 @@ function Budget({ user }) {
         const percentage = (spentAmount / limitAmount) * 100;
         return Math.min(percentage.toFixed(2), 100);
     };
+
 
     return (
         <div className="budget-container">
