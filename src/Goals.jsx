@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_URL from './api';
 
 function Goals({ user }) {
     const [savingGoal, setSavingGoal] = useState(null);
@@ -10,7 +11,7 @@ function Goals({ user }) {
         const fetchData = async () => {
             try {
                 // obtener meta actual
-                const savingGoal = await axios.get(`https://ing2030-backend.onrender.com/savinggoals/${user.id}`);
+                const savingGoal = await axios.get(`${API_URL}/savinggoals/${user.id}`);
                 setSavingGoal(savingGoal.data[0]);
                 setNewTargetAmount(savingGoal.data[0]?.targetAmount || 0); // Inicializar con el valor actual
                 console.log('Respuesta de meta mensual:', savingGoal.data[0]);
@@ -25,7 +26,7 @@ function Goals({ user }) {
     // actualizar meta
     const updateTargetAmount = async () => {
         try {
-            const response = await axios.patch(`https://ing2030-backend.onrender.com/savinggoals/${user.id}`, {
+            const response = await axios.patch(`${API_URL}/savinggoals/${user.id}`, {
                 targetAmount: newTargetAmount,
             });
             setSavingGoal({ ...savingGoal, targetAmount: newTargetAmount }); // Actualizar visualmente

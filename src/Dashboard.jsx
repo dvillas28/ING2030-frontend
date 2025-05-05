@@ -5,20 +5,15 @@ import API_URL from './api';
 function Dashboard({ user }) {
     const [dailySpend, setDailySpend] = useState(0);
     const [dailySpendPerHour, setDailySpendPerHour] = useState(0);
-
-
     const [spentPercentage, setSpentPercentage] = useState(0);
-
-
     const [savingGoal, setSavingGoal] = useState(null);
-    const [budget, setBudget] = useState(0);
 
     // obtener datos del backend
     useEffect(() => {
         const fetchData = async () => {
             try {
                 // obtener gasto diario
-                const dailyResponse = await axios.get(`http://localhost:3000/transactions/daily/${user.id}`);
+                const dailyResponse = await axios.get(`${API_URL}/transactions/daily/${user.id}`);
                 setDailySpend(dailyResponse.data.total);
 
                 calculateDailySpendPerHour(dailyResponse.data.total, dailyResponse.data.startOfDay);
@@ -26,6 +21,14 @@ function Dashboard({ user }) {
                 setSpentPercentage(percent);
             } catch (error) {
                 console.error('Error al obtener el gasto diario:', error);
+            }
+
+            try {
+                // obtener meta actual
+                const savingGoal = await axios.get(`${API_URL}/savinggoals/${user.id}`);
+                setSavingGoal(savingGoal.data[0]?.targetAmount || 0);
+            } catch (error) {
+                console.error('Error al obtener meta mensual:', error);
             }
 
         };
@@ -85,23 +88,23 @@ function Dashboard({ user }) {
                     <div className="info-row">
                         <span className="value">${user.balance}</span>
 
-                    <div className="info-row">
-                        <span className="label">Gastado</span>
-                        <span className="value">${user.spent}</span>
-                    </div>
-                    <div className="progress-bar-container">
-                        <div
-                            className="progress-bar"
-                            style={{ width: `${spentPercentage}%` }}
-                        />
-                    </div>
-                    <div className="progress-info">
-                        <span>{spentPercentage.toFixed(0)}%</span>
+                        <div className="info-row">
+                            <span className="label">Gastado</span>
+                            <span className="value">${user.spent}</span>
+                        </div>
+                        <div className="progress-bar-container">
+                            <div
+                                className="progress-bar"
+                                style={{ width: `${spentPercentage}%` }}
+                            />
+                        </div>
+                        <div className="progress-info">
+                            <span>{spentPercentage.toFixed(0)}%</span>
+                        </div>
                     </div>
                 </div>
-                )}
-            </div>
-            <div className="card">
+            </div >
+            <div className='card'>
                 <h4>Meta de Ahorro</h4>
                 {savingGoal ? (
                     <span className="goal">
@@ -112,6 +115,7 @@ function Dashboard({ user }) {
                 )}
             </div>
         </div >
+
     );
 }
 export default Dashboard;
