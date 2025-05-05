@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import API_URL from './api';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -17,7 +18,7 @@ function Budget({ user }) {
         const fetchBudgetData = async () => {
             try {
                 // obtener presupuesto
-                const budgetRes = await axios.get(`http://localhost:3000/dashboard/budget/${user.id}`);
+                const budgetRes = await axios.get(`${API_URL}/dashboard/budget/${user.id}`);
                 setBudget(budgetRes.data);
                 setLimitAmount(budgetRes.data.limitAmount);
 
@@ -26,11 +27,11 @@ function Budget({ user }) {
                 const month = today.getMonth() + 1;
                 const year = today.getFullYear();
 
-                const expensesRes = await axios.get(`http://localhost:3000/budget/${user.id}`, {
+                const expensesRes = await axios.get(`${API_URL}/budget/${user.id}`, {
                     params: { month, year }
                 });
                 setExpensesData(expensesRes.data);
-                console.log('Gastos recibidos:', expensesRes.data); 
+                console.log('Gastos recibidos:', expensesRes.data);
             } catch (err) {
                 console.error('Error obteniendo datos:', err);
             }
@@ -43,7 +44,7 @@ function Budget({ user }) {
         e.preventDefault();
         try {
             // actualizar / subir presupuesto
-            const BudgetRes = await axios.post(`http://localhost:3000/budget`, {
+            const BudgetRes = await axios.post(`${API_URL}/budget`, {
                 userId: user.id,
                 period: "monthly",
                 limitAmount
@@ -71,12 +72,12 @@ function Budget({ user }) {
                 ]
             };
         }
-    
+
         const labels = expensesData.map(tx => new Date(tx.date).toLocaleDateString('es-CL'));
         const data = expensesData.map(tx => tx.total);
-    
-        console.log('Datos generados para el gráfico:', { labels, data }); 
-    
+
+        console.log('Datos generados para el gráfico:', { labels, data });
+
         return {
             labels,
             datasets: [
@@ -91,7 +92,7 @@ function Budget({ user }) {
             ]
         };
     };
-    
+
 
     const chartOptions = {
         responsive: true,
@@ -101,7 +102,7 @@ function Budget({ user }) {
                 beginAtZero: true,
                 ticks: {
                     stepSize: 2000,
-                    callback: function(value) {
+                    callback: function (value) {
                         return `$${value}`;
                     }
                 },
@@ -131,7 +132,7 @@ function Budget({ user }) {
             }
         }
     };
-    
+
 
     return (
         <div className="budget-container">

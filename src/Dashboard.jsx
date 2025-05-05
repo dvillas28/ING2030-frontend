@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import API_URL from './api';
 
 function Dashboard({ user }) {
     const [dailySpend, setDailySpend] = useState(0);
@@ -12,16 +13,16 @@ function Dashboard({ user }) {
         const fetchData = async () => {
             try {
                 // obtener gasto diario
-                const dailyResponse = await axios.get(`http://localhost:3000/dashboard/daily/${user.id}`);
+                const dailyResponse = await axios.get(`${API_URL}/dashboard/daily/${user.id}`);
                 setDailySpend(dailyResponse.data.total);
-                console.log('Respuesta de gasto diario:', dailyResponse.data); 
+                console.log('Respuesta de gasto diario:', dailyResponse.data);
                 calculateDailySpendPerHour(dailyResponse.data.total, dailyResponse.data.startOfDay);
             } catch (error) {
                 console.error('Error al obtener el gasto diario:', error);
             }
             // obtener presupuesto
             try {
-                const budgetResponse = await axios.get(`http://localhost:3000/dashboard/budget/${user.id}`);
+                const budgetResponse = await axios.get(`${API_URL}/dashboard/budget/${user.id}`);
                 setBudget(budgetResponse.data);
             } catch (error) {
                 console.error('Error al obtener el presupuesto:', error);
@@ -37,7 +38,7 @@ function Dashboard({ user }) {
     const calculateDailySpendPerHour = (spend, startTimestamp) => {
         const now = new Date();
         const startOfDayUTC = new Date(startTimestamp);
-    
+
         // Convertir UTC a hora local
         const startOfDayLocal = new Date(
             startOfDayUTC.getUTCFullYear(),
@@ -45,13 +46,13 @@ function Dashboard({ user }) {
             startOfDayUTC.getUTCDate(),
             0, 0, 0, 0
         );
-    
+
         const hoursDifference = (now - startOfDayLocal) / (1000 * 60 * 60);
         const hourlySpend = hoursDifference > 0 ? (spend / hoursDifference).toFixed(2) : 0;
-    
+
         console.log("Horas transcurridas:", hoursDifference);
         console.log("Tasa por hora:", hourlySpend);
-    
+
         setDailySpendPerHour(hourlySpend);
     };
 
