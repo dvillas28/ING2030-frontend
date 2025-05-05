@@ -6,28 +6,36 @@ function Transactions({ user }) {
 
     const [transactions, setTransac] = useState([]);
 
-    useEffect(() => {
-        const getTransaction = async (e) => {
-            try {
-                const response = await axios.get(`${API_URL}/transactions/history/${user.id}`);
+    const getTransaction = async (e) => {
+        try {
+            const response = await axios.get(`${API_URL}/transactions/history/${user.id}`);
 
-                if (response.status === 200) {
-                    const data = response.data;
-                    // console.log(data);
-                    setTransac(data);
+            if (response.status === 200) {
+                const data = response.data;
+                // console.log(data);
+                setTransac(data);
 
-                }
-            } catch (error) {
-                if (error.response?.status === 500) {
-                    console.log("Error en el servidor");
-                }
+            }
+        } catch (error) {
+            if (error.response?.status === 500) {
+                console.log("Error en el servidor");
             }
         }
+    };
 
+    useEffect(() => {
         getTransaction();
-
     }, [user.id]);
 
+    useEffect(() => {
+        const refreshTransactions = () => {
+            getTransaction();
+        };
+        window.addEventListener('transactionCreated', refreshTransactions);
+        return () => {
+            window.removeEventListener('transactionCreated', refreshTransactions);
+        }
+    }, []);
 
     return (
         <div className="transactions-container">

@@ -69,6 +69,7 @@ function App() {
         // TODO: procesar la transaccion
         //  revisar si se sobrepaso el presupuesto
         //  enviar alertas
+        window.dispatchEvent(new Event('transactionCreated'));
       }
     } catch (error) {
       // alert("Error al crear la transaccion");
