@@ -17,7 +17,10 @@ import addNotification from 'react-push-notification';
 
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
   const [isOpen, setIsOpen] = useState(false);
   const [excel, setExcel] = useState([]);
 
@@ -187,12 +190,27 @@ function App() {
     }
   };
 
+  const handleUser = () => {
+    const userFromStorage = JSON.parse(localStorage.getItem('user'));
+    setUser(userFromStorage);
+    console.log(userFromStorage);
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setUser(null);
+  };
 
   return (
     <Router>
       <header>
         {/* Adornar el titulo una vez hayamos elejido un nombre */}
-        <h2><Link to='/home'>Nombre App</Link></h2>
+        {/* El link se puede hacer mas bonito creo */}
+        {user ? (
+          <h2><Link to='/home'>Nombre App</Link></h2>
+        ) : (
+          <h2>Nombre App</h2>
+        )}
         <button className="button" onClick={chooseRandomEntry}>Elegir Entrada Aleatoria</button>
         {/* <button className="button" onClick={buttonOnClick}>Push</button> */}
         {user && (
@@ -209,7 +227,7 @@ function App() {
               <li>Mi Banco</li>
               <li>Mi perfil</li>
               <li>
-                <Link to="/" onClick={() => setUser(null)}>Cerrar sesión</Link>
+                <Link to="/" onClick={() => handleLogout()}>Cerrar sesión</Link>
               </li>
             </ul>
           </div>
@@ -218,13 +236,13 @@ function App() {
       </header>
       <main className="main-container">
         <Routes>
-          <Route path="/" element={<Login onLogin={setUser} />} />
-          <Route path="/register" element={<Signin onLogin={setUser} />} />
-          <Route path="/home" element={<Dashboard user={user} />} />
-          <Route path='/transactions' element={<Transactions user={user} />} />
-          <Route path="/goals" element={<Goals user={user} />} />
-          <Route path="/budget" element={<Budget user={user} />} />
-          <Route path="/alerts" element={<Alerts user={user} />} />
+          <Route path="/" element={<Login onHandleUser={handleUser} />} />
+          <Route path="/register" element={<Signin onHandleUser={handleUser} />} />
+          <Route path="/home" element={<Dashboard />} />
+          <Route path='/transactions' element={<Transactions />} />
+          <Route path="/goals" element={<Goals />} />
+          <Route path="/budget" element={<Budget />} />
+          <Route path="/alerts" element={<Alerts />} />
         </Routes>
       </main>
     </Router>

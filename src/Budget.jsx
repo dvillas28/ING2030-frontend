@@ -3,11 +3,12 @@ import axios from 'axios';
 import API_URL from './api';
 
 
-function Budget({ user }) {
+function Budget() {
 
     const [budgets, setBudgets] = useState([]);
     const [newBudget, setNewBudget] = useState({ name: '', limitAmount: '', period: '', category: '' });
     const [spentPercentage, setSpentPercentage] = useState(0);
+    const user = JSON.parse(localStorage.getItem('user'));
 
     const fetchBudgetsData = async () => {
         try {

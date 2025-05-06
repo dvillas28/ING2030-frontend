@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import API_URL from './api';
 import axios from 'axios';
 
-function Transactions({ user }) {
+function Transactions() {
 
     const [transactions, setTransac] = useState([]);
+    const user = JSON.parse(localStorage.getItem('user'));
 
     const getTransaction = async (e) => {
         try {

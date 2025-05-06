@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import API_URL from './api';
 
-function Goals({ user }) {
+function Goals() {
     const [savingGoal, setSavingGoal] = useState(null);
     const [newTargetAmount, setNewTargetAmount] = useState(0);
+    const user = JSON.parse(localStorage.getItem('user'));
 
     // obtener datos del backend
     useEffect(() => {

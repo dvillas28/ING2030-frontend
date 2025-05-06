@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import API_URL from './api';
 
-function Alerts({ user }) {
+function Alerts() {
     const [alerts, setAlerts] = useState([]);
+    const user = JSON.parse(localStorage.getItem('user'));
 
     const fetchNotifications = async () => {
         try {

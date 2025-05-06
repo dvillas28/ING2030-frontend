@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import API_URL from './api';
 
-function Dashboard({ user }) {
+function Dashboard() {
     const [dailySpend, setDailySpend] = useState(0);
     const [dailySpendPerHour, setDailySpendPerHour] = useState(0);
     const [spentPercentage, setSpentPercentage] = useState(0);
     const [savingGoal, setSavingGoal] = useState(null);
+    const user = JSON.parse(localStorage.getItem('user'));
 
     const fetchData = async () => {
         try {

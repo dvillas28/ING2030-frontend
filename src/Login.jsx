@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import API_URL from './api';
 
-function Login({ onLogin }) {
+function Login({ onHandleUser }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -29,7 +29,9 @@ function Login({ onLogin }) {
         const user = data.user;
 
         console.log(message);
-        onLogin(user);
+        // onLogin(user);
+        localStorage.setItem('user', JSON.stringify(user));
+        await onHandleUser();
         navigate('/home');
       }
     } catch (error) {
