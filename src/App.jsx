@@ -24,6 +24,7 @@ function App() {
   const [isOpen, setIsOpen] = useState(false);
   const [excel, setExcel] = useState([]);
   const [excelPointer, setExcelPointer] = useState(0);
+  const [savingGoal, setSavingGoal] = useState(null);
 
   // cargar el excel al cargar la página
   useEffect(() => {
@@ -89,7 +90,7 @@ function App() {
       );
 
       if (response.status === 201) {
-        console.log("Transaccion creada exitosamente");
+        console.log("Transacción creada exitosamente");
         const newTransaction = response.data.newTransaction;
 
 
@@ -103,6 +104,7 @@ function App() {
           await checkBudgetUsage(newTransaction);
 
           // Alerta 2: estado de meta a fin de mes
+          await checkSavingGoal(user);
 
           // Ejemplo de envio de alerta:
           // await sendAlert(`Se ha recibido una nueva transaccion - ${newTransaction.category}: ${newTransaction.description}`);
@@ -185,6 +187,48 @@ function App() {
 
     }
 
+  };
+
+  const checkSavingGoal = async (user) => {
+    let text;
+    try {
+      // obtener meta actual
+      const savingGoal = await axios.get(`${API_URL}/savinggoals/${user.id}`);
+      setSavingGoal(savingGoal.data[0]?.targetAmount || 0);
+    } catch (error) {
+      console.error('Error al obtener meta mensual:', error);
+    }
+    try {
+      const remainingBalance = user.balance - user.spent;
+
+      // Condición 1: Si el balance restante es mayor o igual a la meta de ahorro
+      if (remainingBalance >= user.savingGoal) {
+        text = `¡Vamos! Vas bien para tu meta de ahorro.`;
+
+        // Condición 2: Si es el último día del mes y se cumplió la meta de ahorro
+        const today = new Date();
+        const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+        if (today.getDate() === lastDayOfMonth) {
+          text = '¡Felicidades! Cumpliste tu meta de ahorro';
+        }
+      }
+      // Condición 3: Si el balance restante es menor que la meta de ahorro
+      else {
+        const loss = user.savingGoal - remainingBalance;
+        text = `¡Lo lamento! Te faltan ${loss} para cumplir tu meta de ahorro.`;
+      }
+
+      // Enviar alerta
+      await sendAlert(text);
+
+      // Notificación push
+      addNotification({
+        title: text,
+        native: true,
+      });
+    } catch (error) {
+      console.log("Error al verificar la meta de ahorro:", error);
+    }
   };
 
   const sendAlert = async (message) => {
