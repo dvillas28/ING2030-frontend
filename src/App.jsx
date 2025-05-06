@@ -202,9 +202,9 @@ function App() {
     }
     try {
       const remainingBalance = user.balance - user.spent;
-      console.log(remainingBalance, user.savingGoal);
+      console.log(remainingBalance, savingGoal);
       // Condición 1: Si el balance restante es mayor o igual a la meta de ahorro
-      if (remainingBalance >= user.savingGoal) {
+      if (remainingBalance >= savingGoal) {
         text = `¡Vamos! Vas bien para tu meta de ahorro.`;
 
         // Condición 2: Si es el último día del mes y se cumplió la meta de ahorro
@@ -216,7 +216,7 @@ function App() {
       }
       // Condición 3: Si el balance restante es menor que la meta de ahorro
       else {
-        const loss = user.savingGoal - remainingBalance;
+        const loss = savingGoal - remainingBalance;
         setLoss(loss); // Actualiza el estado
         text = `¡Lo lamento! Te pasaste ${loss} de tu meta de ahorro.`;
       }
