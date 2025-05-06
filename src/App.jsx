@@ -202,7 +202,7 @@ function App() {
     }
     try {
       const remainingBalance = user.balance - user.spent;
-
+      console.log(remainingBalance);
       // Condición 1: Si el balance restante es mayor o igual a la meta de ahorro
       if (remainingBalance >= user.savingGoal) {
         text = `¡Vamos! Vas bien para tu meta de ahorro.`;
@@ -273,14 +273,14 @@ function App() {
   return (
     <Router>
       <header>
-        {/* Adornar el titulo una vez hayamos elejido un nombre */}
+        {/* Adornar el titulo una vez hayamos elegido un nombre */}
         {/* El link se puede hacer mas bonito creo */}
         {user ? (
           <h2><Link to='/home'> 💸 </Link></h2>
         ) : (
           <h2> 💸 </h2>
         )}
-        <button className="button" onClick={chooseNextEntry}>Elejir sgte transac</button>
+        <button className="button" onClick={chooseNextEntry}>Elegir sgte transac</button>
         {user && (
           <div>
             <button className="hamburger" onClick={() => setIsOpen(!isOpen)}>
