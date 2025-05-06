@@ -3,33 +3,45 @@ import axios from 'axios';
 import API_URL from './api';
 
 
-function Budget({ user }) {
+function Budget() {
 
     const [budgets, setBudgets] = useState([]);
     const [newBudget, setNewBudget] = useState({ name: '', limitAmount: '', period: '', category: '' });
     const [spentPercentage, setSpentPercentage] = useState(0);
+    const user = JSON.parse(localStorage.getItem('user'));
 
+    const fetchBudgetsData = async () => {
+        try {
+            // obtener presupuestos
+            const budgetRes = await axios.get(`${API_URL}/budgets/${user.id}`);
+            setBudgets(budgetRes.data);
+            console.log(budgets);
+        } catch (err) {
+            if (err.response && err.response.data && err.response.data.message) {
+                console.log(user.budget)
+                alert(`Error: ${err.response.data.message}`);
+            } else {
+                alert('Error desconocido al crear presupuesto');
+            }
+            console.error('Error al crear presupuesto:', err);
+        }
+    };
 
     useEffect(() => {
-        const fetchBudgetsData = async () => {
-            try {
-                // obtener presupuestos
-                const budgetRes = await axios.get(`${API_URL}/budgets/${user.id}`);
-                setBudgets(budgetRes.data);
-                console.log(budgets);
-            } catch (err) {
-                if (err.response && err.response.data && err.response.data.message) {
-                    console.log(user.budget)
-                    alert(`Error: ${err.response.data.message}`);
-                } else {
-                    alert('Error desconocido al crear presupuesto');
-                }
-                console.error('Error al crear presupuesto:', err);
-            }
-        };
-
         fetchBudgetsData();
     }, [user.id]);
+
+    // escuchar el evento transactionCreated para actualiazr los presupuestos
+    useEffect(() => {
+        const refreshBudget = () => {
+            fetchBudgetsData();
+        };
+
+        window.addEventListener('transactionCreated', refreshBudget);
+        return () => {
+            window.removeEventListener('transactionCreated', refreshBudget);
+        };
+    }, []);
 
     //  crear presupuesto
     const handleCreateBudget = async (e) => {

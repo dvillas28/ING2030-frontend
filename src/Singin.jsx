@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import API_URL from './api';
 
-function Signin({ onLogin }) {
+function Signin({ onHandleUser }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [nickname, setNickname] = useState('');
@@ -30,7 +30,9 @@ function Signin({ onLogin }) {
                 const user = data.newUser;
 
                 console.log(message);
-                onLogin(user);
+                // onLogin(user);
+                localStorage.setItem('user', JSON.stringify(user));
+                await onHandleUser();
                 navigate('/home')
 
             }

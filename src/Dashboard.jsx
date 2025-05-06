@@ -2,39 +2,47 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import API_URL from './api';
 
-function Dashboard({ user }) {
+function Dashboard() {
     const [dailySpend, setDailySpend] = useState(0);
     const [dailySpendPerHour, setDailySpendPerHour] = useState(0);
     const [spentPercentage, setSpentPercentage] = useState(0);
     const [savingGoal, setSavingGoal] = useState(null);
+    const user = JSON.parse(localStorage.getItem('user'));
 
+    const fetchData = async () => {
+        try {
+            // obtener gasto diario
+            const dailyResponse = await axios.get(`${API_URL}/transactions/daily/${user.id}`);
+            setDailySpend(dailyResponse.data.total);
+
+            calculateDailySpendPerHour(dailyResponse.data.total, dailyResponse.data.startOfDay);
+            const percent = (user.spent / (user.spent + user.balance)) * 100;
+            setSpentPercentage(percent);
+        } catch (error) {
+            console.error('Error al obtener el gasto diario:', error);
+        }
+
+        try {
+            // obtener meta actual
+            const savingGoal = await axios.get(`${API_URL}/savinggoals/${user.id}`);
+            setSavingGoal(savingGoal.data[0]?.targetAmount || 0);
+        } catch (error) {
+            console.error('Error al obtener meta mensual:', error);
+        }
+
+    };
     // obtener datos del backend
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // obtener gasto diario
-                const dailyResponse = await axios.get(`${API_URL}/transactions/daily/${user.id}`);
-                setDailySpend(dailyResponse.data.total);
-
-                calculateDailySpendPerHour(dailyResponse.data.total, dailyResponse.data.startOfDay);
-                const percent = (user.spent / (user.spent + user.balance)) * 100;
-                setSpentPercentage(percent);
-            } catch (error) {
-                console.error('Error al obtener el gasto diario:', error);
-            }
-
-            try {
-                // obtener meta actual
-                const savingGoal = await axios.get(`${API_URL}/savinggoals/${user.id}`);
-                setSavingGoal(savingGoal.data[0]?.targetAmount || 0);
-            } catch (error) {
-                console.error('Error al obtener meta mensual:', error);
-            }
-
-        };
-
         fetchData();
     }, [user.id]);
+
+    // escuchar evento transactionCreated para actualizar el dashboard
+    useEffect(() => {
+        window.addEventListener('transactionCreated', fetchData);
+        return () => {
+            window.removeEventListener('transactionCreated', fetchData);
+        };
+    }, []);
 
     // tasa de gasto
     const calculateDailySpendPerHour = (spend, startTimestamp) => {
