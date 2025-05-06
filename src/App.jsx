@@ -155,15 +155,15 @@ function App() {
         // mandar alertas dependiendo del usage
         if (usage > 99) {
           // envio de alerta!
-          text = `Atencion! Has sobrepasado tu presupuesto: "${category}"`;
+          text = `¡Atención! Has sobrepasado tu presupuesto: "${category}"`;
         }
 
         else if (usage > 85) {
-          text = `Atencion! Estas muy cerca de sobrepasar tu presupuesto: "${category}"`;
+          text = `¡Atención! Estás muy cerca de sobrepasar tu presupuesto: "${category}"`;
         }
 
         else {
-          text = `Se ha recibido una nueva transaccion - ${category}: ${transaction.description}`;
+          text = `Se ha recibido una nueva transacción - ${category}: ${transaction.description}`;
         }
 
       }
@@ -173,8 +173,8 @@ function App() {
 
       // si no existe: mandar alerta de transaccion no considerada en el presupuesto
       if (error.response?.status === 404) {
-        console.log("No existe presupuesto asociado a esta transaccion");
-        text = `Se ha recibido una nueva transaccion no categorizada - ${transaction.category}: ${transaction.description}`;
+        console.log("No existe presupuesto asociado a esta transacción");
+        text = `Se ha recibido una nueva transacción no categorizada - ${transaction.category}: ${transaction.description}`;
       }
 
     } finally {
