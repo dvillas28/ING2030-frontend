@@ -25,6 +25,8 @@ function App() {
   const [excel, setExcel] = useState([]);
   const [excelPointer, setExcelPointer] = useState(0);
   const [savingGoal, setSavingGoal] = useState(null);
+  const [loss, setLoss] = useState(null);
+
 
   // cargar el excel al cargar la página
   useEffect(() => {
@@ -214,8 +216,9 @@ function App() {
       }
       // Condición 3: Si el balance restante es menor que la meta de ahorro
       else {
-        const loss = user.savingGoal - remainingBalance;
-        text = `¡Lo lamento! Te faltan ${loss} para cumplir tu meta de ahorro.`;
+        const calculatedLoss = user.savingGoal - remainingBalance;
+        setLoss(calculatedLoss); // Actualiza el estado
+        text = `¡Lo lamento! Te pasaste ${loss} de tu meta de ahorro.`;
       }
 
       // Enviar alerta
@@ -273,9 +276,9 @@ function App() {
         {/* Adornar el titulo una vez hayamos elejido un nombre */}
         {/* El link se puede hacer mas bonito creo */}
         {user ? (
-          <h2><Link to='/home'>Nombre App</Link></h2>
+          <h2><Link to='/home'> 💸 </Link></h2>
         ) : (
-          <h2>Nombre App</h2>
+          <h2> 💸 </h2>
         )}
         <button className="button" onClick={chooseNextEntry}>Elejir sgte transac</button>
         {user && (
