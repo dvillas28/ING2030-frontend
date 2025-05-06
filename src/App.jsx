@@ -60,14 +60,23 @@ function App() {
   const chooseNextEntry = () => {
     if (excel.length > 0) {
       const entry = excel[excelPointer];
-      setExcelPointer((prevValue) => (prevValue + 1) % excel.length);
-
       console.log('Entrada seleccionada:', entry);
       createTransaction(entry);
+      setExcelPointer((prevValue) => (prevValue + 1) % excel.length);
     } else {
       alert("El excel no contiene datos o no ha sido cargado");
     }
-  }
+  };
+
+  // Tomar transacciones cada 10 segundos
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     if (user && excel.length > 0) {
+  //       chooseNextEntry();
+  //     }
+  //   }, 5000); // 5 segundos
+  //   return () => clearInterval(intervalId);
+  // }, [user, excel.length]);
 
   // procesamiento de la transaccion
   const createTransaction = async (entry) => {
@@ -225,7 +234,6 @@ function App() {
           <h2>Nombre App</h2>
         )}
         <button className="button" onClick={chooseNextEntry}>Elejir sgte transac</button>
-        {/* <button className="button" onClick={buttonOnClick}>Push</button> */}
         {user && (
           <div>
             <button className="hamburger" onClick={() => setIsOpen(!isOpen)}>
