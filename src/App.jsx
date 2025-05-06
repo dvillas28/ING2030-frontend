@@ -202,7 +202,7 @@ function App() {
     }
     try {
       const remainingBalance = user.balance - user.spent;
-      console.log(remainingBalance);
+      console.log(remainingBalance, user.savingGoal);
       // Condición 1: Si el balance restante es mayor o igual a la meta de ahorro
       if (remainingBalance >= user.savingGoal) {
         text = `¡Vamos! Vas bien para tu meta de ahorro.`;
