@@ -23,6 +23,7 @@ function App() {
   });
   const [isOpen, setIsOpen] = useState(false);
   const [excel, setExcel] = useState([]);
+  const [excelPointer, setExcelPointer] = useState(0);
 
   // cargar el excel al cargar la página
   useEffect(() => {
@@ -43,8 +44,7 @@ function App() {
 
   }, []);
 
-  // elejir una entrada de transaccion random
-  // TODO: hacerlo secuencial con un contador_id
+  // Elejir entrada de manera random
   const chooseRandomEntry = () => {
     if (excel.length > 0) {
       const randomIndex = Math.floor(Math.random() * excel.length);
@@ -55,6 +55,19 @@ function App() {
       alert("El excel no contiene datos o no ha sido cargado");
     }
   };
+
+  // Elejir entrada de forma secuencial
+  const chooseNextEntry = () => {
+    if (excel.length > 0) {
+      const entry = excel[excelPointer];
+      setExcelPointer((prevValue) => (prevValue + 1) % excel.length);
+
+      console.log('Entrada seleccionada:', entry);
+      createTransaction(entry);
+    } else {
+      alert("El excel no contiene datos o no ha sido cargado");
+    }
+  }
 
   // procesamiento de la transaccion
   const createTransaction = async (entry) => {
@@ -211,7 +224,7 @@ function App() {
         ) : (
           <h2>Nombre App</h2>
         )}
-        <button className="button" onClick={chooseRandomEntry}>Elegir Entrada Aleatoria</button>
+        <button className="button" onClick={chooseNextEntry}>Elejir sgte transac</button>
         {/* <button className="button" onClick={buttonOnClick}>Push</button> */}
         {user && (
           <div>
