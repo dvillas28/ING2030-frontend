@@ -216,8 +216,8 @@ function App() {
       }
       // Condición 3: Si el balance restante es menor que la meta de ahorro
       else {
-        const calculatedLoss = user.savingGoal - remainingBalance;
-        setLoss(calculatedLoss); // Actualiza el estado
+        const loss = user.savingGoal - remainingBalance;
+        setLoss(loss); // Actualiza el estado
         text = `¡Lo lamento! Te pasaste ${loss} de tu meta de ahorro.`;
       }
 
