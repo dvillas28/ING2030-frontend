@@ -14,8 +14,15 @@ function Dashboard() {
             // obtener gasto diario
             const dailyResponse = await axios.get(`${API_URL}/transactions/daily/${user.id}`);
             setDailySpend(dailyResponse.data.total);
-
             calculateDailySpendPerHour(dailyResponse.data.total, dailyResponse.data.startOfDay);
+
+            // Obtener datos actualizados del usuario
+            const userResponse = await axios.get(`${API_URL}/users/${user.id}`);
+            const updatedUser = userResponse.data;
+            localStorage.setItem('user', JSON.stringify(updatedUser)); // Actualizar localStorage
+            console.log('Usuario actualizado: ');
+            console.log(updatedUser);
+
             const percent = (user.spent / (user.spent + user.balance)) * 100;
             setSpentPercentage(percent);
         } catch (error) {

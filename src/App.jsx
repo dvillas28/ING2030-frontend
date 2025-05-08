@@ -129,7 +129,14 @@ function App() {
         // Alerts       : Se actualiza OK
         // Dashboard    : Los presupuestos se actualizan OK, pero la parte de Saldo aun no, revisar y arreglar
         // Goals        : No se actualiza ya que aun no se implementa. 
+
+        // Actualizar los datos del usuario
+        const userResponse = await axios.get(`${API_URL}/users/${user.id}`);
+        const updatedUser = userResponse.data;
+        localStorage.setItem('user', JSON.stringify(updatedUser)); // Actualizar localStorage
+
         window.dispatchEvent(new Event('transactionCreated'));
+
       }
     } catch (error) {
       // alert("Error al crear la transaccion");
