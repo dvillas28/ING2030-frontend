@@ -105,7 +105,7 @@ function App() {
           await checkBudgetUsage(newTransaction);
 
           // Alerta 2: estado de meta a fin de mes
-          // await checkSavingGoal(user); Dani y Mati: No estamos seguros si funciona correctamente, asi que lo vamos a comentar mientras
+          await checkSavingGoal(user);
 
           // Ejemplo de envio de alerta:
           // await sendAlert(`Se ha recibido una nueva transaccion - ${newTransaction.category}: ${newTransaction.description}`);
