@@ -13,8 +13,13 @@ function Goals() {
             try {
                 // obtener meta actual
                 const savingGoal = await axios.get(`${API_URL}/savinggoals/${user.id}`);
-                setSavingGoal(savingGoal.data[0]);
-                setNewTargetAmount(savingGoal.data[0]?.targetAmount || 0); // Inicializar con el valor actual
+                if (savingGoal.data.length > 0) {
+                    setSavingGoal(savingGoal.data[0]);
+                    setNewTargetAmount(savingGoal.data[0]?.targetAmount || 0);
+                } else {
+                    // Si no hay meta, inicializar con 0
+                    setNewTargetAmount(0);
+                }
                 console.log('Respuesta de meta mensual:', savingGoal.data[0]);
             } catch (error) {
                 console.error('Error al obtener meta mensual:', error);
@@ -37,6 +42,19 @@ function Goals() {
         }
     };
 
+    // creat meta
+    const postTargetAmount = async () => {
+        try {
+            const response = await axios.post(`${API_URL}/savinggoals/${user.id}`, {
+                targetAmount: newTargetAmount,
+            });
+            setSavingGoal({ ...savingGoal, targetAmount: newTargetAmount }); // Actualizar visualmente
+            console.log('Meta creada:', response.data);
+        } catch (error) {
+            console.error('Error al crear meta:', error);
+        }
+    };
+
     // Incrementar o decrementar en pasos de 5000
     const incrementAmount = () => {
         setNewTargetAmount((prev) => prev + 5000);
@@ -56,13 +74,21 @@ function Goals() {
                             <button className="change-btn" onClick={decrementAmount}> - </button>
                             <strong> ${newTargetAmount} </strong>
                             <button className="change-btn" onClick={incrementAmount}> + </button>
+                            <div className="update-goal">
+                                <button className="submit-btn" onClick={updateTargetAmount}>Actualizar Meta</button>
+                            </div>
                         </span>
                     ) : (
-                        <p className="no-goal">Aún no tienes una meta de ahorro.<strong>¡Define una!</strong></p>
+                        <span className="goal">
+                            <p className="no-goal">Aún no tienes una meta de ahorro.</p>
+                            <button className="change-btn" onClick={decrementAmount}> - </button>
+                            <strong> ${newTargetAmount} </strong>
+                            <button className="change-btn" onClick={incrementAmount}> + </button>
+                            <div className="update-goal">
+                                <button className="submit-btn" onClick={postTargetAmount}>Crear Meta</button>
+                            </div>
+                        </span>
                     )}
-                </div>
-                <div className="update-goal">
-                    <button className="submit-btn" onClick={updateTargetAmount}>Actualizar Meta</button>
                 </div>
             </div>
         </div>

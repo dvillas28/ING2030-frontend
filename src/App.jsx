@@ -195,10 +195,10 @@ function App() {
       }
 
     } finally {
-      // envio de la alerta
+      // envío de la alerta
       await sendAlert(text);
 
-      // notificacion push
+      // notificación push
       addNotification({
         title: text,
         native: true,
@@ -214,16 +214,11 @@ function App() {
       // obtener meta actual
       const savingGoal = await axios.get(`${API_URL}/savinggoals/${user.id}`);
       setSavingGoal(savingGoal.data[0]?.targetAmount || 0);
-    } catch (error) {
-      console.error('Error al obtener meta mensual:', error);
-    }
-    try {
       const remainingBalance = user.balance - user.spent;
-      console.log(remainingBalance, savingGoal);
       // Condición 1: Si el balance restante es mayor o igual a la meta de ahorro
-      if (remainingBalance >= savingGoal) {
-        text = `¡Vamos! Vas bien para tu meta de ahorro.`;
-
+      if (remainingBalance >= savingGoal.data[0]?.targetAmount) {
+        const loss = remainingBalance - savingGoal.data[0]?.targetAmount;
+        text = `¡Vamos! Vas bien para tu meta de ahorro. Cuidado con pasarte de ${loss}`;
         // Condición 2: Si es el último día del mes y se cumplió la meta de ahorro
         const today = new Date();
         const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
@@ -233,22 +228,25 @@ function App() {
       }
       // Condición 3: Si el balance restante es menor que la meta de ahorro
       else {
-        const loss = savingGoal - remainingBalance;
+        const savingGoal = await axios.get(`${API_URL}/savinggoals/${user.id}`);
+        const loss = savingGoal.data[0]?.targetAmount - remainingBalance;
         setLoss(loss); // Actualiza el estado
         text = `¡Lo lamento! Te pasaste ${loss} de tu meta de ahorro.`;
       }
-
-      // Enviar alerta
+    } catch (error) {
+      console.log("Error al verificar la meta de ahorro:", error);
+    } finally {
+      // envío de la alerta
       await sendAlert(text);
 
-      // Notificación push
+      // notificación push
       addNotification({
         title: text,
         native: true,
       });
-    } catch (error) {
-      console.log("Error al verificar la meta de ahorro:", error);
+
     }
+
   };
 
   const sendAlert = async (message) => {
