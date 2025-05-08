@@ -290,7 +290,7 @@ function App() {
         ) : (
           <h2> 💸 </h2>
         )}
-        <button className="button" onClick={chooseNextEntry}>Elegir sgte transac</button>
+        <button className="test-button" onClick={chooseNextEntry}>Actualizar Movimientos</button>
         {user && (
           <div>
             <button className="hamburger" onClick={() => setIsOpen(!isOpen)}>
