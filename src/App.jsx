@@ -99,17 +99,27 @@ function App() {
         // crear alerta y notificacion en si se necesita
 
         // LOGICA DE ENVIO DE ALERTAS
-        // Por ahora solamente tenemos alertas de cargos
         if (newTransaction.type === 'cargo') {
 
           // Alerta 1: revisar si se sobrepaso el presupuesto
           await checkBudgetUsage(newTransaction);
 
           // Alerta 2: estado de meta a fin de mes
-          await checkSavingGoal(user);
+          // await checkSavingGoal(user); Dani y Mati: No estamos seguros si funciona correctamente, asi que lo vamos a comentar mientras
 
           // Ejemplo de envio de alerta:
           // await sendAlert(`Se ha recibido una nueva transaccion - ${newTransaction.category}: ${newTransaction.description}`);
+        }
+
+        else if (newTransaction.type === 'deposito') {
+          let msg = `Se ha recibido un nuevo deposito - ${newTransaction.category}: ${newTransaction.description}`
+          await sendAlert(msg);
+
+          // notificacion push
+          addNotification({
+            title: msg,
+            native: true,
+          });
         }
 
 
