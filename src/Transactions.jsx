@@ -48,15 +48,22 @@ function Transactions() {
                         <tr>
                             <th>Fecha</th>
                             <th>Descripción</th>
+                            <th>Categoría</th> 
                             <th>Monto</th>
                         </tr>
                     </thead>
                     <tbody>
                         {transactions.map((transaction, index) => (
                             <tr key={index}>
-                                <td>{new Date(transaction.date).toLocaleDateString('es-CL')}</td>
-                                <td>{transaction.description}</td>
-                                <td>${transaction.amount.toLocaleString('es-CL')}</td>
+                                <td>{new Date(transaction.date).toLocaleDateString('es-CL') || 'Sin categoría'}</td>
+                                <td>{transaction.description || 'Sin categoría'}</td>
+                                <td>{transaction.category || 'Sin categoría'}</td>
+                                <td>
+                                    {transaction.amount != null
+                                        ? `$${Number(transaction.amount).toLocaleString('es-CL')}`
+                                        : 'Sin categoría'}
+                                    </td>
+
                             </tr>
                         ))}
                     </tbody>

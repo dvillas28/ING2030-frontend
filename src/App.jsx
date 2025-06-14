@@ -14,6 +14,7 @@ import PublicGoogleSheetsParser from 'public-google-sheets-parser';
 import axios from 'axios';
 import API_URL from './api';
 import addNotification from 'react-push-notification';
+import { categorizeTransaction } from './categorizer';
 
 
 function App() {
@@ -35,8 +36,16 @@ function App() {
         // TODO: mover el id del sheet a una variable de entorno
         const parser = new PublicGoogleSheetsParser('1LHrW5rWxMevVtGhdjNU56j_tk_wCzszYP5w2Beg-q0s')
         const data = await parser.parse();
-        setExcel(data);
-        console.log(data);
+        const normalized = data.map((entry) => ({
+          date: entry["Fecha"],
+          description: entry["Descripción"],
+          amount: entry["Cheques / Cargos $"] || entry["Depósitos / Abonos $"] || 0,
+          type: entry["Cheques / Cargos $"] < 0 ? "cargo" : "deposito",
+          raw: entry // Guarda el original por si lo necesitas
+        }));
+
+        setExcel(normalized);
+        console.log(normalized);
       } catch (error) {
         console.log(error);
       }
@@ -61,14 +70,27 @@ function App() {
 
   // Elejir entrada de forma secuencial
   const chooseNextEntry = () => {
-    if (excel.length > 0) {
-      const entry = excel[excelPointer];
-      console.log('Entrada seleccionada:', entry);
-      createTransaction(entry);
-      setExcelPointer((prevValue) => (prevValue + 1) % excel.length);
-    } else {
-      alert("El excel no contiene datos o no ha sido cargado");
+    if (!user) {
+      alert("Debes iniciar sesión para crear movimientos.");
+      return;
     }
+
+    if (excel.length === 0) {
+      alert("El Excel no contiene datos o no ha sido cargado.");
+      return;
+    }
+
+    const entry = excel[excelPointer];
+
+    if (!entry) {
+      console.error("Entrada inválida en el Excel:", entry);
+      alert("Entrada inválida del Excel.");
+      return;
+    }
+
+    console.log('Entrada seleccionada:', entry);
+    createTransaction(entry);
+    setExcelPointer((prevValue) => (prevValue + 1) % excel.length);
   };
 
   // Tomar transacciones cada 10 segundos
@@ -85,11 +107,19 @@ function App() {
   const createTransaction = async (entry) => {
 
     try {
-      const response = await axios.post(`${API_URL}/transactions/${user.id}`,
-        {
-          entry,
-        },
-      );
+      const category = categorizeTransaction(entry.description || '');
+      const cleanEntry = {
+        date: entry.date,
+        description: entry.description,
+        amount: entry.amount,
+        type: entry.type,
+        category: category 
+      };
+
+      const response = await axios.post(`${API_URL}/transactions/${user.id}`, {
+        entry: cleanEntry,
+        category,
+      });
 
       if (response.status === 201) {
         console.log("Transacción creada exitosamente");
