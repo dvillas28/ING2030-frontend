@@ -2,19 +2,50 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import API_URL from './api';
 
-function Signin({ onLogin }) {
+function Signin({ onHandleUser }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [nickname, setNickname] = useState('');
     const navigate = useNavigate();
 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         // aquí iría el llamado al backend para obtener user y asinar true a onLogin
-        onLogin(true);
-        navigate('/home')
+        try {
+            const response = await axios.post(`${API_URL}/users/register`,
+                {
+                    username: nickname,
+                    email: email,
+                    password: password
+                },
+            );
+
+            if (response.status === 201) {
+                const data = response.data;
+                const message = data.message;
+                const user = data.newUser;
+
+                console.log(message);
+                // onLogin(user);
+                localStorage.setItem('user', JSON.stringify(user));
+                await onHandleUser();
+                navigate('/home')
+
+            }
+        } catch (error) {
+            if (error.response?.status === 409) {
+                alert('Email ya esta en uso');
+            }
+
+            else if (error.response?.status === 500) {
+                alert('Error en el servidor');
+            }
+        }
+
     };
 
     return (
@@ -24,7 +55,7 @@ function Signin({ onLogin }) {
                     <h1>Crear cuenta</h1>
                     <p className="subtitle">Regístrate para comenzar</p>
                     <form className="form" onSubmit={handleSubmit}>
-                    <div className="form-group">
+                        <div className="form-group">
                             <label>Apodo</label>
                             <input
                                 type="name"

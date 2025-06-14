@@ -1,16 +1,136 @@
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import API_URL from './api';
+
 function Dashboard() {
+    const [dailySpend, setDailySpend] = useState(0);
+    const [dailySpendPerHour, setDailySpendPerHour] = useState(0);
+    const [spentPercentage, setSpentPercentage] = useState(0);
+    const [savingGoal, setSavingGoal] = useState(null);
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    const fetchData = async () => {
+        try {
+            // obtener gasto diario
+            const dailyResponse = await axios.get(`${API_URL}/transactions/daily/${user.id}`);
+            setDailySpend(dailyResponse.data.total);
+            calculateDailySpendPerHour(dailyResponse.data.total, dailyResponse.data.startOfDay);
+
+            // Obtener datos actualizados del usuario
+            const userResponse = await axios.get(`${API_URL}/users/${user.id}`);
+            const updatedUser = userResponse.data;
+            localStorage.setItem('user', JSON.stringify(updatedUser)); // Actualizar localStorage
+            console.log('Usuario actualizado: ');
+            console.log(updatedUser);
+
+            const percent = (user.spent / (user.spent + user.balance)) * 100;
+            setSpentPercentage(percent);
+        } catch (error) {
+            console.error('Error al obtener el gasto diario:', error);
+        }
+
+        try {
+            // obtener meta actual
+            const savingGoal = await axios.get(`${API_URL}/savinggoals/${user.id}`);
+            setSavingGoal(savingGoal.data[0]?.targetAmount || 0);
+        } catch (error) {
+            console.error('Error al obtener meta mensual:', error);
+        }
+
+    };
+    // obtener datos del backend
+    useEffect(() => {
+        fetchData();
+    }, [user.id]);
+
+    // escuchar evento transactionCreated para actualizar el dashboard
+    useEffect(() => {
+        window.addEventListener('transactionCreated', fetchData);
+        return () => {
+            window.removeEventListener('transactionCreated', fetchData);
+        };
+    }, []);
+
+    // tasa de gasto
+    const calculateDailySpendPerHour = (spend, startTimestamp) => {
+        const now = new Date();
+        const startOfDayUTC = new Date(startTimestamp);
+
+        // Convertir UTC a hora local
+        const startOfDayLocal = new Date(
+            startOfDayUTC.getUTCFullYear(),
+            startOfDayUTC.getUTCMonth(),
+            startOfDayUTC.getUTCDate(),
+            0, 0, 0, 0
+        );
+
+        const hoursDifference = (now - startOfDayLocal) / (1000 * 60 * 60);
+        const hourlySpend = hoursDifference > 0 ? (spend / hoursDifference).toFixed(2) : 0;
+
+        console.log("Horas transcurridas:", hoursDifference);
+        console.log("Tasa por hora:", hourlySpend);
+
+        setDailySpendPerHour(hourlySpend);
+    };
+
     return (
         <div className="dashboard">
-            <div className="card">
+            <div className="card daily-spend">
                 <h4>Gasto del día</h4>
+                {dailySpend === 0 ? (
+                    <p>Aún no has realizado ningún gasto hoy.</p>
+                ) : (
+                    <div className="spend-details">
+                        <div className="main-amount">
+                            <span className="label">Total hoy</span>
+                            <span className="amount">${dailySpend}</span>
+                        </div>
+                        <div className="per-hour">
+                            <span className="label">Tasa por hora</span>
+                            <span className="value">${(dailySpendPerHour * 1).toFixed(0)} /h</span>
+                        </div>
+                        <div className="projection">
+                            <span className="label">Proyección semanal</span>
+                            <span className="value">${(dailySpend * 7).toFixed(0)}</span>
+                        </div>
+                    </div>
+                )}
             </div>
-            <div className="card">
-                <h4>Tasa de gasto actual</h4>
+
+            <div className="card card-balance">
+                <h4>Saldo</h4>
+                <div className="balance-details">
+                    <div className="info-row">
+                        <span className="value">${user.balance}</span>
+
+                        <div className="info-row">
+                            <span className="label">Gastado</span>
+                            <span className="value">${user.spent}</span>
+                        </div>
+                        <div className="progress-bar-container">
+                            <div
+                                className="progress-bar"
+                                style={{ width: `${spentPercentage}%` }}
+                            />
+                        </div>
+                        <div className="progress-info">
+                            <span>{spentPercentage.toFixed(0)}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div >
+            <div className='card'>
+                <h4>Meta de Ahorro</h4>
+                {savingGoal ? (
+                    <span className="goal">
+                        <strong> ${savingGoal} </strong>
+                    </span>
+                ) : (
+                    <p className="no-goal">Aún no tienes una meta de ahorro.</p>
+                )}
             </div>
-            <div className="card">
-                <h4>Progreso Semanal</h4>
-            </div>
-        </div>
+        </div >
+
     );
 }
 export default Dashboard;
