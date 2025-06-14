@@ -511,3 +511,43 @@ h1 {
     outline: none;
     box-shadow: 0 0 4px var(--accent-color);
 }
+
+.recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.recommendation-card {
+    border-radius: 12px;
+    padding: 1rem;
+    background-color: var(--background-color);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+
+
+.recommendation-card h5 {
+    margin-bottom: 0.5rem;
+    color: var(--accent-color);
+    font-size: 0.9rem;
+}
+
+.recommendation-card p {
+    color: var(--primary-color);
+    font-size: 0.9rem;
+}
+
+.recommendation-card a {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--highlight-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.recommendation-card a:hover {
+    transform: scale(1.02);
+}
