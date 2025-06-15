@@ -18,11 +18,11 @@ export function recommendProducts(user, transactions = []) {
     }
 
     // 2. Inversión
-    if (user.balance > 500000 || totalExpenses < 0.5 * totalDeposits) {
+    if (user.balance > 300000 || totalExpenses < 0.5 * totalDeposits) {
         recs.push({
             title: "Invierte en Fondos Mutuos",
             description: "Invierte a través de la Plataforma Abierta de Inversiones de Itaú.",
-            link: "https://www.itau.cl/empresas/fondos-mutuos",
+            link: "https://www.itau.cl/personas/inversiones/fondos-mutuos",
             productId: "fondos-mutuos"
         });
     }
@@ -44,6 +44,15 @@ export function recommendProducts(user, transactions = []) {
             description: "Ahorra de forma segura y obtén rentabilidad con un depósito a plazo.",
             link: "https://www.itau.cl/personas/inversiones/depositos-a-plazo",
             productId: "deposito-a-plazo"
+        });
+    }
+    //5. Ahorro Previsional Voluntario
+    if (user.balance > 500000) {
+        recs.push({
+            title: "Ahorro Previsional Voluntario",
+            description: "Mejora o adelanta tu jubilación, aprovechando beneficios tributarios con tu APV.",
+            link: "https://www.itau.cl/personas/inversiones/ahorro-previsional-voluntario",
+            productId: "ahorro-previosional-voluntario"
         });
     }
 

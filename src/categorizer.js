@@ -6,7 +6,8 @@ const categorias = [
   { categoria: 'Salud', keywords: ['farmacia', 'doctor', 'salud', 'isapre', 'consulta', 'MEDIC'] },
   { categoria: 'Entretenimiento', keywords: ['cine', 'netflix', 'spotify', 'disney', 'juegos'] },
   { categoria: 'Vivienda', keywords: ['arriendo', 'dividendo', 'cuenta luz', 'cuenta agua', 'gasto común', 'SANTA ISABEL'] },
-  { categoria: 'Ingresos', keywords: ['depósito', 'abono', 'tef de', 'comision tef', 'abono convenio', 'tgr', 'devocion'] },
+  { categoria: 'Ingresos', keywords: ['depósito', 'abono', 'tef de', 'abono convenio', 'tgr', 'devocion'] },
+  { categoria: 'Pago a Terceros', keywords: ['terceros']}
 ];
 
 export function categorizeTransaction(description) {
