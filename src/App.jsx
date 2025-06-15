@@ -184,7 +184,7 @@ function App() {
   const checkBudgetUsage = async (transaction) => {
     const category = transaction.category;
     let text;
-    const send_noti = false;
+    let send_noti = false;
 
     try {
 
@@ -249,9 +249,20 @@ function App() {
 
   const checkSavingGoal = async (user) => {
     let text;
+    let send_noti = false;
     try {
       // obtener meta actual
       const savingGoal = await axios.get(`${API_URL}/savinggoals/${user.id}`);
+      // console.log("meta de ahorro:", savingGoal.data);
+
+      // si no hay saving goals, NO mandar ninguna alerta
+      if (!!savingGoal.data) {
+        console.log("no hay saving goals");
+        throw new Error("No hay saving goals");
+      }
+
+      send_noti = true;
+
       setSavingGoal(savingGoal.data[0]?.targetAmount || 0);
       const remainingBalance = user.balance - user.spent;
       // Condición 1: Si el balance restante es mayor o igual a la meta de ahorro
@@ -275,14 +286,19 @@ function App() {
     } catch (error) {
       console.log("Error al verificar la meta de ahorro:", error);
     } finally {
-      // envío de la alerta
-      await sendAlert(text);
 
-      // notificación push
-      // addNotification({
-      //   title: text,
-      //   native: true,
-      // });
+      if (send_noti) {
+        // envío de la alerta
+        await sendAlert(text);
+
+        // notificación push
+        addNotification({
+          title: text,
+          native: true,
+        });
+
+      }
+
 
     }
 
