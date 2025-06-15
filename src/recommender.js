@@ -8,7 +8,7 @@ export function recommendProducts(user, transactions = []) {
         .reduce((s, t) => s + Number(t.amount), 0);
 
     // 1. Cuenta corriente sin costo
-    if ( totalDeposits > 100000 && user.balance > 0) {
+    if (totalDeposits > 100000 && user.balance > 0) {
         recs.push({
             title: "Cuenta Corriente sin Mantención",
             description: "Cuenta gratuita sin requisitos, incluye tarjeta crédito y débito.",
@@ -34,6 +34,16 @@ export function recommendProducts(user, transactions = []) {
             description: "¿Saldo negativo? Obtén una línea de crédito de $100.000 para cubrir gastos urgentes.",
             link: "https://banco.itau.cl/wps/wcm/connect/es_contentsbic/bic_public/home/para_usted/linea_credito/linea_preferencial/linea+de+credito",
             productId: "linea-credito-emergencia"
+        });
+    }
+
+    // 4. Depósito a Plazo
+    if (user.balance > 200000) {
+        recs.push({
+            title: "Depósito a Plazo",
+            description: "Ahorra de forma segura y obtén rentabilidad con un depósito a plazo.",
+            link: "https://www.itau.cl/personas/inversiones/depositos-a-plazo",
+            productId: "deposito-a-plazo"
         });
     }
 
