@@ -585,3 +585,14 @@ h1 {
     font-size: 0.8rem;
 }
 
+.chart-container {
+  padding: 1rem;
+  margin: 1rem auto;
+  box-sizing: border-box;
+  align-items: center;
+}
+
+
+.chart-container h2 {
+    color: var(--primary-color);
+}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import API_URL from './api';
 import axios from 'axios';
+import TransactionsChart from './Chart';
 
 function Transactions() {
 
@@ -44,6 +45,7 @@ function Transactions() {
 
     return (
         <div className="transactions-container">
+
             <h2>Historial de Transacciones</h2>
 
             <div className="filter-container">

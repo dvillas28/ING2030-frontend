@@ -8,6 +8,7 @@ import Transactions from './Transactions';
 import Goals from './Goals';
 import Budget from './Budget';
 import Alerts from './Alerts';
+import TransactionsChart from './Chart';
 import { Link } from 'react-router-dom';
 // import handle from 'mqtt/lib/handlers/index';
 import PublicGoogleSheetsParser from 'public-google-sheets-parser';
@@ -334,6 +335,7 @@ function App() {
             <ul className={`nav-links ${isOpen ? 'open' : ''}`}>
               <li><Link to='/home'>Inicio</Link></li>
               <li><Link to='/transactions'>Transacciones</Link></li>
+              <li><Link to ='/grafico'>Gráfico de Gastos</Link></li>
               <li><Link to='/goals'>Metas financieras</Link></li>
               <li><Link to='/budget'>Mis presupuestos</Link></li>
               <li><Link to='/alerts'>Alertas</Link></li>
@@ -353,6 +355,7 @@ function App() {
           <Route path="/register" element={<Signin onHandleUser={handleUser} />} />
           <Route path="/home" element={<Dashboard />} />
           <Route path='/transactions' element={<Transactions />} />
+          <Route path="/grafico" element={<TransactionsChart />} />
           <Route path="/goals" element={<Goals />} />
           <Route path="/budget" element={<Budget />} />
           <Route path="/alerts" element={<Alerts />} />
