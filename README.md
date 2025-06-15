@@ -8,3 +8,5 @@
 5. Crear archivo `.env` en raíz del proyecto que contenga línea ``. (aún no este paso)
 6. Correr proyecto: ejecutar en terminal `npm run dev`
 7. Ir a sitio web local http://localhost:5173/
+
+hola
