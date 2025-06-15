@@ -114,7 +114,7 @@ function App() {
         description: entry.description,
         amount: entry.amount,
         type: entry.type,
-        category: category 
+        category: category
       };
 
       const response = await axios.post(`${API_URL}/transactions/${user.id}`, {
@@ -147,10 +147,10 @@ function App() {
           await sendAlert(msg);
 
           // notificacion push
-          addNotification({
-            title: msg,
-            native: true,
-          });
+          // addNotification({
+          //   title: msg,
+          //   native: true,
+          // });
         }
 
 
@@ -184,6 +184,8 @@ function App() {
   const checkBudgetUsage = async (transaction) => {
     const category = transaction.category;
     let text;
+    const send_noti = false;
+
     try {
 
       // buscar si existe un presupuesto asociado a esta transaccion
@@ -204,10 +206,12 @@ function App() {
         if (usage > 99) {
           // envio de alerta!
           text = `¡Atención! Has sobrepasado tu presupuesto: "${category}"`;
+          send_noti = true;
         }
 
         else if (usage > 85) {
           text = `¡Atención! Estás muy cerca de sobrepasar tu presupuesto: "${category}"`;
+          send_noti = true;
         }
 
         else {
@@ -229,11 +233,15 @@ function App() {
       // envío de la alerta
       await sendAlert(text);
 
-      // notificación push
-      addNotification({
-        title: text,
-        native: true,
-      });
+      if (send_noti) {
+        // notificación push
+        addNotification({
+          title: text,
+          native: true,
+        });
+
+      }
+
 
     }
 
@@ -271,10 +279,10 @@ function App() {
       await sendAlert(text);
 
       // notificación push
-      addNotification({
-        title: text,
-        native: true,
-      });
+      // addNotification({
+      //   title: text,
+      //   native: true,
+      // });
 
     }
 
@@ -335,7 +343,7 @@ function App() {
             <ul className={`nav-links ${isOpen ? 'open' : ''}`}>
               <li><Link to='/home'>Inicio</Link></li>
               <li><Link to='/transactions'>Transacciones</Link></li>
-              <li><Link to ='/grafico'>Gráfico de Gastos</Link></li>
+              <li><Link to='/grafico'>Gráfico de Gastos</Link></li>
               <li><Link to='/goals'>Metas financieras</Link></li>
               <li><Link to='/budget'>Mis presupuestos</Link></li>
               <li><Link to='/alerts'>Alertas</Link></li>
