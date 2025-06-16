@@ -16,6 +16,7 @@ import axios from 'axios';
 import API_URL from './api';
 import addNotification from 'react-push-notification';
 import { categorizeTransaction } from './categorizer';
+import logo from './assets/logo.png';
 
 
 function App() {
@@ -346,9 +347,15 @@ function App() {
         {/* Adornar el titulo una vez hayamos elegido un nombre */}
         {/* El link se puede hacer mas bonito creo */}
         {user ? (
-          <h2><Link to='/home'> 💸 </Link></h2>
+          <h2>
+            <Link to='/home'>
+              <img src={logo} alt="Logo" style={{ width: '40px', height: '40px', verticalAlign: 'middle' }} />
+            </Link>
+          </h2>
         ) : (
-          <h2> 💸 </h2>
+          <h2>
+            <img src={logo} alt="Logo" style={{ width: '40px', height: '40px', verticalAlign: 'middle' }} />
+          </h2>
         )}
         <button className="test-button" onClick={chooseNextEntry}>Actualizar Movimientos</button>
         {user && (
