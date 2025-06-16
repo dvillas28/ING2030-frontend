@@ -343,18 +343,18 @@ function App() {
 
   return (
     <Router>
-      <header>
+      <header style={{ padding: '0rem 2rem' }}>
         {/* Adornar el titulo una vez hayamos elegido un nombre */}
         {/* El link se puede hacer mas bonito creo */}
         {user ? (
           <h2>
             <Link to='/home'>
-              <img src={logo} alt="Logo" style={{ width: '100px', height: '100px', verticalAlign: 'middle', padding: '0rem 2rem' }} />
+              <img src={logo} alt="Logo" style={{ width: '100px', height: '100px', verticalAlign: 'middle' }} />
             </Link>
           </h2>
         ) : (
           <h2>
-            <img src={logo} alt="Logo" style={{ width: '100px', height: '100px', verticalAlign: 'middle', padding: '0rem 2rem' }} />
+            <img src={logo} alt="Logo" style={{ width: '100px', height: '100px', verticalAlign: 'middle' }} />
           </h2>
         )}
         <button className="test-button" onClick={chooseNextEntry}>Actualizar Movimientos</button>
