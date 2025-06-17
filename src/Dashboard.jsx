@@ -92,10 +92,6 @@ function Dashboard() {
                             <span className="label">Total hoy</span>
                             <span className="amount">${dailySpend}</span>
                         </div>
-                        <div className="per-hour">
-                            <span className="label">Tasa por hora</span>
-                            <span className="value">${(dailySpendPerHour * 1).toFixed(0)} /h</span>
-                        </div>
                         <div className="projection">
                             <span className="label">Proyección semanal</span>
                             <span className="value">${(dailySpend * 7).toFixed(0)}</span>
