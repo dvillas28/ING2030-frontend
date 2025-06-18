@@ -7,7 +7,13 @@ function Transactions() {
 
     const [transactions, setTransac] = useState([]);
     const [categoryFilter, setCategoryFilter] = useState(''); // NUEVO
+    const [newCategoryKeyword, setNewCategoryKeyword] = useState('');
+    const [newCategoryName, setNewCategoryName] = useState('');
     const user = JSON.parse(localStorage.getItem('user'));
+    const [categorias, setCategorias] = useState(() => {
+        const local = localStorage.getItem('categorias');
+        return local ? JSON.parse(local) : [];
+    });
 
     const getTransaction = async () => {
         try {
@@ -43,6 +49,52 @@ function Transactions() {
     // Obtenemos las categorías únicas
     const uniqueCategories = [...new Set(transactions.map(t => t.category).filter(Boolean))];
 
+    // Función para añadir keyword a la categoría
+    const addKeywordToCategory = async (transaction, index) => {
+        const category = newCategoryName;
+
+        if (!category) return alert("Debes completar ambos campos.");
+        const lowerKeyword = transaction.description.trim().split(' ')[0].toLowerCase();
+        const updatedCategorias = [...categorias];
+        const match = updatedCategorias.find(c => c.categoria === category);
+        if (match) {
+            // Agregar keyword si no existe
+            if (!match.keywords.includes(lowerKeyword)) {
+                match.keywords.push(lowerKeyword);
+            }
+        } else {
+            categorias.push({ categoria: category, keywords: [lowerKeyword] });
+        }
+
+        setCategorias(updatedCategorias);
+        localStorage.setItem('categorias', JSON.stringify(updatedCategorias));
+
+        try {
+            await axios.put(`${API_URL}/transactions/${transaction.id}`, {
+                category: category
+            });
+            console.log('Categoría actualizada en la BDD');
+        } catch (error) {
+            console.error('Error actualizando en la BDD:', error);
+        }
+
+        alert(`Se añadió la palabra clave "${lowerKeyword}" a la categoría "${category}".`);
+        setNewCategoryKeyword('');
+        setNewCategoryName('');
+
+        window.dispatchEvent(new Event('categoriasActualizadas'));
+
+    };
+
+    useEffect(() => {
+        const actualizarCategorias = () => {
+            const newCats = JSON.parse(localStorage.getItem('categorias') || '[]');
+            setCategorias(newCats);
+        };
+
+        window.addEventListener('categoriasActualizadas', actualizarCategorias);
+        return () => window.removeEventListener('categoriasActualizadas', actualizarCategorias);
+    }, []);
     return (
         <div className="transactions-container">
 
@@ -80,7 +132,22 @@ function Transactions() {
                             <tr key={index}>
                                 <td>{new Date(transaction.date).toLocaleDateString('es-CL')}</td>
                                 <td>{transaction.description || 'Sin descripción'}</td>
-                                <td>{transaction.category || 'Sin categoría'}</td>
+                                <td>
+                                    {transaction.category && transaction.category !== 'Otros' ? (
+                                        transaction.category
+                                    ) : (
+                                        <div>
+                                            <input
+                                                type="text"
+                                                placeholder="Nueva categoría"
+                                                value={newCategoryName}
+                                                onChange={(e) => setNewCategoryName(e.target.value)}
+                                                style={{ width: '100px', marginRight: '5px' }}
+                                            />
+                                            <button onClick={() => addKeywordToCategory(transaction)}>Guardar</button>
+                                        </div>
+                                    )}
+                                </td>
                                 <td>
                                     {transaction.amount != null
                                         ? `$${Number(transaction.amount).toLocaleString('es-CL')}`
