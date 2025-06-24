@@ -9,6 +9,7 @@ function Transactions() {
     const [categoryFilter, setCategoryFilter] = useState(''); // NUEVO
     const [newCategoryKeyword, setNewCategoryKeyword] = useState('');
     const [newCategoryName, setNewCategoryName] = useState('');
+    const [newCategoryNames, setNewCategoryNames] = useState({});
     const user = JSON.parse(localStorage.getItem('user'));
     const [categorias, setCategorias] = useState(() => {
         const local = localStorage.getItem('categorias');
@@ -50,20 +51,20 @@ function Transactions() {
     const uniqueCategories = [...new Set(transactions.map(t => t.category).filter(Boolean))];
 
     // Función para añadir keyword a la categoría
-    const addKeywordToCategory = async (transaction, index) => {
-        const category = newCategoryName;
+    const addKeywordToCategory = async (transaction) => {
+        const category = newCategoryNames[transaction.id];
 
-        if (!category) return alert("Debes completar ambos campos.");
+        if (!category) return alert("Debes añadir una categoría");
+
         const lowerKeyword = transaction.description.trim().split(' ')[0].toLowerCase();
         const updatedCategorias = [...categorias];
         const match = updatedCategorias.find(c => c.categoria === category);
         if (match) {
-            // Agregar keyword si no existe
             if (!match.keywords.includes(lowerKeyword)) {
                 match.keywords.push(lowerKeyword);
             }
         } else {
-            categorias.push({ categoria: category, keywords: [lowerKeyword] });
+            updatedCategorias.push({ categoria: category, keywords: [lowerKeyword] });
         }
 
         setCategorias(updatedCategorias);
@@ -77,14 +78,20 @@ function Transactions() {
         } catch (error) {
             console.error('Error actualizando en la BDD:', error);
         }
-
-        alert(`Se añadió la palabra clave "${lowerKeyword}" a la categoría "${category}".`);
-        setNewCategoryKeyword('');
-        setNewCategoryName('');
+        setNewCategoryNames((prev) => ({ ...prev, [transaction.id]: '' }));
 
         window.dispatchEvent(new Event('categoriasActualizadas'));
-
+        window.dispatchEvent(new Event('transactionUpdated'));
     };
+
+    useEffect(() => {
+        const refreshTransactions = () => {
+            getTransaction();
+        };
+
+        window.addEventListener('transactionUpdated', refreshTransactions);
+        return () => window.removeEventListener('transactionUpdated', refreshTransactions);
+    }, []);
 
     useEffect(() => {
         const actualizarCategorias = () => {
@@ -140,8 +147,10 @@ function Transactions() {
                                             <input
                                                 type="text"
                                                 placeholder="Nueva categoría"
-                                                value={newCategoryName}
-                                                onChange={(e) => setNewCategoryName(e.target.value)}
+                                                value={newCategoryNames[transaction.id] || ''}
+                                                onChange={(e) =>
+                                                    setNewCategoryNames({ ...newCategoryNames, [transaction.id]: e.target.value })
+                                                }
                                                 style={{ width: '100px', marginRight: '5px' }}
                                             />
                                             <button onClick={() => addKeywordToCategory(transaction)}>Guardar</button>
